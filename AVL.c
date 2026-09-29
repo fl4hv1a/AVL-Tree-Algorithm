@@ -13,6 +13,14 @@ struct Node {
 };
 typedef struct Node Node;
 
+int height(Node *n){
+    if(n == NULL){
+        return -1;        //se estiver nulo
+    }else{
+        return n -> height; //caso contrário retornar nó apontando para a sua altura (?)
+    }
+}
+
 Node * node_alloc(int key)
 {
     Node *nd = (Node *)malloc(sizeof(Node));
