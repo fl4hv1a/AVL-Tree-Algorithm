@@ -6,7 +6,7 @@
 
 struct Node {
     int key;
-    struct Node *parent
+    struct Node *parent 
     struct Node *left;
     struct Node *right;
     int height;
@@ -26,8 +26,8 @@ Node * node_alloc(int key)
     Node *nd = (Node *)malloc(sizeof(Node));
     if (nd) {
         nd->key = key;
-        nd->height = 0;
-        nd->parent = NULL;
+        nd->height = 1; //uma folha
+        nd->parent = NULL; 
         nd->left = NULL;
         nd->right = NULL;
     }
@@ -37,6 +37,20 @@ Node * node_alloc(int key)
 void node_free(Node *nd)
 {
     free(nd);
+}
+
+Node * minimum(Node* x){         //cria ponteiro auxiliar
+    while(x -> left != NULL){    //laço de repetição que verifica nós a esquerda do que se verifica agora
+        x = x -> left;           //se sim, move o ponteiro x pra esquerda
+    }
+return x;                        //while encerra, o ponteiro retornado é o de menor valor da subárvore
+}
+
+Node * maximum(Node *x){         //cria ponteiro auxiliar
+    while (x -> right != NULL) { //verifica nós a direita do que se verifica agora
+        x = x -> right;          //se sim, move ponteiro x para direita
+    }
+    return x;                    //while encerra, o ponteiro retornado é o maior da subárvore
 }
 
 struct BinarySearchTree // nó da árvore
@@ -92,22 +106,6 @@ void bst_insert(BST *T, Node *z)
     } else {
         y->right = z;
     }
-}
-
-Node * bst_minimum(Node *x) // encontra o menor elemento que está mais à esquerda
-{
-    while (x->left != NULL) {
-        x = x->left;
-    }
-    return x;
-}
-
-Node * bst_maximum(Node *x) // encontra o maior elemento que está mais à direita
-{
-    while (x->right != NULL) {
-        x = x->right;
-    }
-    return x;
 }
 
 
