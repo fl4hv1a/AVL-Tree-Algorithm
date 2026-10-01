@@ -6,3 +6,5 @@ Algoritmo de remoção e inserção de nós em uma Árvore AVL de busca, para a 
 29/09: Adicão da rotina de alocação da árvore, liberar memória de forma recursiva, encontrar o menor e maior valor e inserção da árvore.
 
 30/09: Modificação de rotinas para encontrar maior ou menor valor das subárvores.
+
+01/10: Codigo de Ricardo colocado e implementado
