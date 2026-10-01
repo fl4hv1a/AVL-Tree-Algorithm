@@ -6,7 +6,7 @@
 
 struct Node {
     int key;
-    struct Node *parent 
+    struct Node *parent; 
     struct Node *left;
     struct Node *right;
     int height;
@@ -65,7 +65,7 @@ BST * bst_alloc() // aloca memória para a estrutura da árvore , cria ela vazia
     if (T) {
         T->root = NULL;
     }
-    return t;
+    return T;
 }
 
 void bst_freeRec(Node *nd) // libera a árvore de forma recursiva começando pelo nó filho até o nó pai
