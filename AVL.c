@@ -91,7 +91,6 @@ Node *node_alloc(int key) {
 
     if (n) {
         n->key = key;
-        n->height = 1; //uma folha
     }
 
     return n;
