@@ -11,15 +11,72 @@ typedef struct Node {
     struct Node *parent;
     struct Node *left;
     struct Node *right;
-    int height;
+    int height; // Distância até o nó folha mais profundo entre as subárvores esquerda e direita
 } Node;
 
+/**
+ * @brief Encontra o maior entre dois inteiros.
+ * 
+ * @param[in] a O primeiro inteiro a ser comparado.
+ * @param[in] b O segundo inteiro a ser comparado.
+ * 
+ * @retval - `a`: se `a > b`;
+ * @retval - `b`: se `a <= b`.
+ */
+int max(const int a, const int b) {
+    return (a > b) ? a : b;
+}
+
+/**
+ * @brief Retorna a altura de um nó (distância até o nó folha mais profundo entre as subárvores filhas).
+ * 
+ * @details Retorna diretamente a altura do nó se ele for não-nulo e -1 caso contrário.
+ *          Retornar -1 em nós nulos torna o cálculo do balanceamento mais simples
+ *          para nós folha.
+ * 
+ * @param[in] n Ponteiro para o nó do qual se deseja receber a altura.
+ * 
+ * @return Altura do nó `n`.
+ */
 int height(Node *n) {
-    if(n == NULL){
-        return -1;        //se estiver nulo
+    if(n) {
+        return n->height;
     } else {
-        return n -> height; //caso contrário retornar nó apontando para a sua altura (?)
+        // Se 'n' for nulo, retornamos -1 para facilitar o cálculo da altura de nós folha.
+        return -1;
     }
+}
+
+/**
+ * @brief Recalcula e atualiza a altura de um nó.
+ * 
+ * @param[in] n Ponteiro para o nó que será atualizado.
+ */
+void update_height(Node *n) {
+    if (n) {
+        // Se 'n' for folha, a expressão se torna "1 + (-1) = 0"
+        // (já que a altura de todo nó nulo é -1 por definição)
+        n->height = 1 + max(height(n->left), height(n->right));
+    }
+}
+
+/**
+ * @brief Calcula o fator de balanceamento (FB) de um nó.
+ * 
+ * @details Retorna a diferença entre as alturas das subárvores filhas, ou `0`
+ *          caso o nó seja nulo (para facilitar o cálculo do FB de nós folha).
+ * 
+ * @param[in] n Ponteiro para o nó do qual será calculado o balanceamento.
+ * 
+ * @return O fator de balanceamento do nó `n`.
+ * 
+ * @retval - Um valor `negativo`: Se a altura da subárvore direita for maior que a esquerda;
+ * @retval - `0`: Se as duas subárvores tiverem a mesma altura;
+ * @retval - Um valor `positivo`: Se a altura da subárvore esquerda for maior que a direita.
+ */
+int get_balance(Node *n) {
+    if (!n) return 0;
+    return height(n->left) - height(n->right);
 }
 
 /**
@@ -50,11 +107,11 @@ void node_free(Node *n) {
 }
 
 /**
- * @brief Busca e retorna o menor nó encontrado em uma sub-árvore BST.
+ * @brief Busca e retorna o menor nó encontrado em uma subárvore BST.
  * 
- * @param[in] x Ponteiro não-nulo para a raíz da sub-árvore alvo.
+ * @param[in] x Ponteiro não-nulo para a raíz da subárvore alvo.
  * 
- * @return Ponteiro para o menor nó encontrado na sub-árvore alvo.
+ * @return Ponteiro para o menor nó encontrado na subárvore alvo.
  */
 Node *minimum(Node* x) {
     while(x -> left != NULL){    //laço de repetição que verifica nós a esquerda do que se verifica agora
@@ -65,11 +122,11 @@ Node *minimum(Node* x) {
 }
 
 /**
- * @brief Busca e retorna o maior nó encontrado em uma sub-árvore BST.
+ * @brief Busca e retorna o maior nó encontrado em uma subárvore BST.
  * 
- * @param[in] x Ponteiro não-nulo para a raíz da sub-árvore alvo.
+ * @param[in] x Ponteiro não-nulo para a raíz da subárvore alvo.
  * 
- * @return Ponteiro para o maior nó encontrado na sub-árvore alvo.
+ * @return Ponteiro para o maior nó encontrado na subárvore alvo.
  */
 Node *maximum(Node *x) {         //cria ponteiro auxiliar
     while (x -> right != NULL) { //verifica nós a direita do que se verifica agora
@@ -92,9 +149,9 @@ BST *bst_alloc() {
 }
 
 /**
- * @brief Desaloca recursivamente (das folhas até a raíz) uma sub-árvore composta por nós previamente alocados com node_alloc().
+ * @brief Desaloca recursivamente (das folhas até a raíz) uma subárvore composta por nós previamente alocados com node_alloc().
  * 
- * @param[in] n Ponteiro para o nó raíz da sub-árvore a ser desalocada.
+ * @param[in] n Ponteiro para o nó raíz da subárvore a ser desalocada.
  */
 void bst_freeRec(Node *n) {
     if (n) {
@@ -188,9 +245,9 @@ Node *bst_predecessor(Node *x) {
 }
 
 /**
- * @brief Busca por um nó em uma sub-árvore BST que contenha uma chave específica.
+ * @brief Busca por um nó em uma subárvore BST que contenha uma chave específica.
  * 
- * @param[in] x Ponteiro para o nó raíz da sub-árvore BST onde a busca será realizada.
+ * @param[in] x Ponteiro para o nó raíz da subárvore BST onde a busca será realizada.
  * @param[in] key Chave do nó que será buscado.
  * 
  * @return Ponteiro para o nó encontrado, ou NULL caso nenhum nó contendo a chave especificada seja encontrado.
@@ -208,11 +265,11 @@ Node *bst_search(Node *x, int key) {
 }
 
 /**
- * @brief Substitui uma sub-árvore BST de raíz `u` por uma sub-árvore BST de raíz `v`.
+ * @brief Substitui uma subárvore BST de raíz `u` por uma subárvore BST de raíz `v`.
  * 
- * @param[in] T Ponteiro para a árvore BST onde as sub-árvores estão contidas.
- * @param[in] u Ponteiro para o nó raíz da sub-árvore BST original.
- * @param[in] v Ponteiro para o novo nó raíz da sub-árvore BST.
+ * @param[in] T Ponteiro para a árvore BST onde as subárvores estão contidas.
+ * @param[in] u Ponteiro para o nó raíz da subárvore BST original.
+ * @param[in] v Ponteiro para o novo nó raíz da subárvore BST.
  */
 void transplant(BST *T, Node *u, Node *v) {
     if (u->parent == NULL) { // se u for a raiz, v vai virar a nova raiz
@@ -257,11 +314,11 @@ void bst_delete(BST *T, Node *z) {
 }
 
 /**
- * @brief Calcula recursivamente o tamanho (quantidade de nós) de uma sub-árvore BST.
+ * @brief Calcula recursivamente o tamanho (quantidade de nós) de uma subárvore BST.
  * 
- * @param[in] x Ponteiro para a raíz da sub-árvore BST a ser calculada.
+ * @param[in] x Ponteiro para a raíz da subárvore BST a ser calculada.
  * 
- * @return Inteiro positivo representando a quantidade de nós existentes na sub-árvore BST fornecida.
+ * @return Inteiro positivo representando a quantidade de nós existentes na subárvore BST fornecida.
  */
 int bst_size(Node *x) {
     if (x == NULL) // se não existe retorna 0
@@ -271,9 +328,9 @@ int bst_size(Node *x) {
 }
 
 /**
- * @brief Imprime recursivamente uma representação textual de uma sub-árvore BST.
+ * @brief Imprime recursivamente uma representação textual de uma subárvore BST.
  * 
- * @param[in] n Nó raiz da sub-árvore a ser impressa.
+ * @param[in] n Nó raiz da subárvore a ser impressa.
  */
 void bst_printRec(Node *n) {
     if (n) {
@@ -295,9 +352,9 @@ void bst_print(BST *T) {
 }
 
 /**
- * @brief Percorre uma sub-árvore BST em-ordem e armazena suas chaves em um vetor.
+ * @brief Percorre uma subárvore BST em-ordem e armazena suas chaves em um vetor.
  * 
- * @param[in] nd Ponteiro para o nó raiz da sub-árvore a ser percorrida.
+ * @param[in] nd Ponteiro para o nó raiz da subárvore a ser percorrida.
  * @param[out] arr Ponteiro para um vetor (já alocado) onde as chaves serão armazenadas.
  * 
  * @param[in,out] index Ponteiro para a variável inteira que controla a posição atual no vetor. 
@@ -320,20 +377,18 @@ void bst_store(Node *nd, int *arr, int *index) {
  * @param[in] a Ponteiro genérico para o primeiro elemento a ser comparado.
  * @param[in] b Ponteiro genérico para o segundo elemento a ser comparado.
  * 
- * @return Resultado da comparação:
+ * @return O resultado da comparação.
  * 
- *         - Um inteiro negativo (se `a` for menor que `b`);
- * 
- *         - `0` (se `a` for igual a `b`);
- * 
- *         - Um inteiro positivo (se `a` for maior que `b`).
+ * @retval - Um inteiro `negativo`: Se `a` for menor que `b`;
+ * @retval - `0`: Se `a` for igual a `b`;
+ * @retval - Um inteiro `positivo`: Se `a` for maior que `b`.
  */
 int int_comp(const void *a, const void *b) {
     return (*(int *)a - *(int *)b);
 }
 
 /**
- * @brief Verifica se uma sub-árvore BST possui exatamente as mesmas chaves
+ * @brief Verifica se uma subárvore BST possui exatamente as mesmas chaves
  *        (considerando-se um percurso em-ordem) de um vetor de referência.
  * 
  * @details A validação se inicia comparando o tamanho da árvore com o do vetor.
@@ -341,14 +396,14 @@ int int_comp(const void *a, const void *b) {
  *          Por fim, extrai as chaves da árvore (também em-ordem)
  *          e realiza uma comparação elemento a elemento.
  * 
- * @param[in] nd Ponteiro para o nó raiz da sub-árvore BST a ser verificada.
+ * @param[in] nd Ponteiro para o nó raiz da subárvore BST a ser verificada.
  * @param[in] data Ponteiro constante para um vetor contendo as chaves de referência.
  * @param[in] N Quantidade de elementos contidos no vetor de referência.
  * 
- * @return Resultado da validação da sub-árvore.
+ * @return Resultado da validação da subárvore.
  * 
- * @retval - `true`: se a sub-árvore contiver exatamente as mesmas chaves em-ordem do vetor;
- * @retval - `false`: caso o tamanho da sub-árvore seja diferente ou alguma
+ * @retval - `true`: se a subárvore contiver exatamente as mesmas chaves em-ordem do vetor;
+ * @retval - `false`: caso o tamanho da subárvore seja diferente ou alguma
  *           chave não corresponda ao seu respectivo valor de referência.
  */
 bool bst_check(Node *nd, const int *const data, const int N) {
@@ -387,13 +442,13 @@ bool bst_check(Node *nd, const int *const data, const int N) {
 }
 
 /**
- * @brief Imprime uma representação textual da estrutura geometrica completa de uma sub-árvore BST deitada no terminal.
+ * @brief Imprime uma representação textual da estrutura geometrica completa de uma subárvore BST deitada no terminal.
  * 
  * @details Utiliza um percurso invertido (Direita -> Raiz -> Esquerda) e uma identação progressiva
  *          para desenhar a árvore "deitada". A raiz aparece na margem esquerda do terminal,
- *          a sub-árvore direita cresce para a parte de cima e a esquerda para a parte de baixo.
+ *          a subárvore direita cresce para a parte de cima e a esquerda para a parte de baixo.
  * 
- * @param[in] root Ponteiro para o nó raiz da sub-árvore a ser impressa.
+ * @param[in] root Ponteiro para o nó raiz da subárvore a ser impressa.
  * @param[in] space Quantidade atual de espaços (identação) para o nível de profundidade atual.
  */
 void bst_printTreeRec(Node *root, int space) {
