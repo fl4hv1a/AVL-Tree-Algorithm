@@ -112,7 +112,7 @@ void node_free(Node *n) {
  * 
  * @return Ponteiro para o menor nó encontrado na subárvore alvo.
  */
-Node *minimum(Node* x) {
+Node *bst_minimum(Node* x) {
     Node *y = NULL; // Ponteiro que armazenará a posição anterior de x
 
     while (x) { // Enquanto x for não-nulo
@@ -130,7 +130,7 @@ Node *minimum(Node* x) {
  * 
  * @return Ponteiro para o maior nó encontrado na subárvore alvo.
  */
-Node *maximum(Node *x) {         
+Node *bst_maximum(Node *x) {         
     Node *y = NULL; // Ponteiro que armazenará a posição anterior de x
 
     while (x) { // Enquanto x for não-nulo
@@ -162,7 +162,7 @@ BST *bst_alloc() {
 void bst_freeRec(Node *n) {
     if (n) {
         bst_freeRec(n->left);
-        bst_free_Rec(n->right);
+        bst_freeRec(n->right);
         node_free(n);
     }
 }
