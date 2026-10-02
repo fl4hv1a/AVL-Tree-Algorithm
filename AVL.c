@@ -113,11 +113,14 @@ void node_free(Node *n) {
  * @return Ponteiro para o menor nó encontrado na subárvore alvo.
  */
 Node *minimum(Node* x) {
-    while(x -> left != NULL){    //laço de repetição que verifica nós a esquerda do que se verifica agora
-        x = x -> left;           //se sim, move o ponteiro x pra esquerda
+    Node *y = NULL; // Ponteiro que armazenará a posição anterior de x
+
+    while (x) { // Enquanto x for não-nulo
+        y = x; // Armazena o endereço atual de x
+        x = x->left; // Desce o ponteiro x pela esquerda
     }
 
-    return x;                        //while encerra, o ponteiro retornado é o de menor valor da subárvore
+    return y;
 }
 
 /**
@@ -127,11 +130,15 @@ Node *minimum(Node* x) {
  * 
  * @return Ponteiro para o maior nó encontrado na subárvore alvo.
  */
-Node *maximum(Node *x) {         //cria ponteiro auxiliar
-    while (x -> right != NULL) { //verifica nós a direita do que se verifica agora
-        x = x -> right;          //se sim, move ponteiro x para direita
+Node *maximum(Node *x) {         
+    Node *y = NULL; // Ponteiro que armazenará a posição anterior de x
+
+    while (x) { // Enquanto x for não-nulo
+        y = x; // Armazena o endereço atual de x
+        x = x->right; // Desce o ponteiro x pela direita
     }
-    return x;                    //while encerra, o ponteiro retornado é o maior da subárvore
+
+    return y;
 }
 
 typedef struct BinarySearchTree {
@@ -165,7 +172,7 @@ void bst_freeRec(Node *n) {
  * 
  * @param[in] T Ponteiro para a árvore BST a ser desalocada.
  */
-void bst_free(BST * T) {
+void bst_free(BST *T) {
     bst_freeRec(T->root); // Desaloca recursivamente todos os nós
 
     free(T); // Desaloca a própria estrutura bst
