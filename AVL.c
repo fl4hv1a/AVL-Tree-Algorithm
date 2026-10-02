@@ -4,89 +4,126 @@
 #include <string.h>
 #include <assert.h>
 
-struct Node {
+#define TAB_SIZE 4 // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
+
+typedef struct Node {
     int key;
-    struct Node *parent 
+    struct Node *parent;
     struct Node *left;
     struct Node *right;
     int height;
-};
-typedef struct Node Node;
+} Node;
 
-int height(Node *n){
+int height(Node *n) {
     if(n == NULL){
         return -1;        //se estiver nulo
-    }else{
+    } else {
         return n -> height; //caso contrário retornar nó apontando para a sua altura (?)
     }
 }
 
-Node * node_alloc(int key)
-{
-    Node *nd = (Node *)malloc(sizeof(Node));
-    if (nd) {
-        nd->key = key;
-        nd->height = 1; //uma folha
-        nd->parent = NULL; 
-        nd->left = NULL;
-        nd->right = NULL;
+/**
+ * @brief Aloca um nó na memória heap e preenche com a chave fornecida.
+ * 
+ * @param[in] key Chave a ser inserida no nó alocado.
+ * 
+ * @return Ponteiro para o nó alocado, ou NULL em caso de falha na alocação.
+ */
+Node *node_alloc(int key) {
+    Node *n = (Node *) calloc(1, sizeof(Node));
+
+    if (n) {
+        n->key = key;
+        n->height = 1; //uma folha
     }
-    return nd;
+
+    return n;
 }
 
-void node_free(Node *nd)
-{
-    free(nd);
+/**
+ * @brief Desaloca um nó previamente alocado com node_alloc().
+ * 
+ * @param[in] n Ponteiro para o nó a ser desalocado.
+ */
+void node_free(Node *n) {
+    free(n);
 }
 
-Node * minimum(Node* x){         //cria ponteiro auxiliar
+/**
+ * @brief Busca e retorna o menor nó encontrado em uma sub-árvore BST.
+ * 
+ * @param[in] x Ponteiro não-nulo para a raíz da sub-árvore alvo.
+ * 
+ * @return Ponteiro para o menor nó encontrado na sub-árvore alvo.
+ */
+Node *minimum(Node* x) {
     while(x -> left != NULL){    //laço de repetição que verifica nós a esquerda do que se verifica agora
         x = x -> left;           //se sim, move o ponteiro x pra esquerda
     }
-return x;                        //while encerra, o ponteiro retornado é o de menor valor da subárvore
+
+    return x;                        //while encerra, o ponteiro retornado é o de menor valor da subárvore
 }
 
-Node * maximum(Node *x){         //cria ponteiro auxiliar
+/**
+ * @brief Busca e retorna o maior nó encontrado em uma sub-árvore BST.
+ * 
+ * @param[in] x Ponteiro não-nulo para a raíz da sub-árvore alvo.
+ * 
+ * @return Ponteiro para o maior nó encontrado na sub-árvore alvo.
+ */
+Node *maximum(Node *x) {         //cria ponteiro auxiliar
     while (x -> right != NULL) { //verifica nós a direita do que se verifica agora
         x = x -> right;          //se sim, move ponteiro x para direita
     }
     return x;                    //while encerra, o ponteiro retornado é o maior da subárvore
 }
 
-struct BinarySearchTree // nó da árvore
-{
+typedef struct BinarySearchTree {
     struct Node *root;
-};
-typedef struct BinarySearchTree BST;
+} BST;
 
-BST * bst_alloc() // aloca memória para a estrutura da árvore , cria ela vazia e retorna
-{
-    BST *T = (BST *)malloc(sizeof(BST));
-    if (T) {
-        T->root = NULL;
+/**
+ * @brief Aloca uma BST vazia na memória heap.
+ * 
+ * @return Ponteiro para a BST alocada, ou NULL em caso de falha na alocação.
+ */
+BST *bst_alloc() {
+    return (BST *) calloc(1, sizeof(BST));
+}
+
+/**
+ * @brief Desaloca recursivamente (das folhas até a raíz) uma sub-árvore composta por nós previamente alocados com node_alloc().
+ * 
+ * @param[in] n Ponteiro para o nó raíz da sub-árvore a ser desalocada.
+ */
+void bst_freeRec(Node *n) {
+    if (n) {
+        bst_freeRec(n->left);
+        bst_free_Rec(n->right);
+        node_free(n);
     }
-    return t;
 }
 
-void bst_freeRec(Node *nd) // libera a árvore de forma recursiva começando pelo nó filho até o nó pai
-{
-    if (nd) {
-        bst_freeRec(nd->left);
-        bst_free_Rec(nd->right);
-        node_free(nd);
-    }
+/**
+ * @brief Desaloca uma árvore BST (e todos os seus nós) previamente alocada com bst_alloc().
+ * 
+ * @param[in] T Ponteiro para a árvore BST a ser desalocada.
+ */
+void bst_free(BST * T) {
+    bst_freeRec(T->root); // Desaloca recursivamente todos os nós
+
+    free(T); // Desaloca a própria estrutura bst
 }
 
-void bst_free(BST * T) 
-{
-    bst_freeRec(T->root);
-    free(T); // libera a própria estrutura bst
-}
-
-void bst_insert(BST *T, Node *z)
-{
+/**
+ * @brief Insere um novo nó em uma árvore BST.
+ * 
+ * @param[in] T Ponteiro para a árvore BST onde o nó deve ser inserido.
+ * @param[in] z Ponteiro para o nó a ser inserido.
+ */
+void bst_insert(BST *T, Node *z) {
     Node *y = NULL; // y vai acompanhar o pai de onde inserir
-    Node *x = T->root; //começa na raiz
+    Node *x = T->root; // começa na raiz
 
     while (x != NULL) {
         y = x; // guarda o nó atual em y
@@ -108,34 +145,57 @@ void bst_insert(BST *T, Node *z)
     }
 }
 
-Node * bst_successor(Node *x) // para encontrar o nó com a menor chave maior que x
-{
+/**
+ * @brief Busca e retorna o nó com a menor chave maior que a chave de x (o sucessor em-ordem de x)
+ * 
+ * @param[in] x Ponteiro para o nó predecessor em-ordem do nó que será buscado.
+ * 
+ * @return Ponteiro para o nó sucessor em-ordem de x, ou NULL caso nenhum sucessor seja encontrado.
+ */
+Node *bst_successor(Node *x) {
     if (x->right != NULL) { // se ele tiver um filho no lado direito o sucessor vai estar por lá
         return bst_minimum(x->right);
     }
+
     Node *y = x->parent; // se não tiver sobe e procura o sucessor a partir do nó pai
     while (y != NULL && x == y->right) {
         x = y;
         y = y->parent;
     }
+
     return y; // o loop vai terminar quando o y tiver o proximo elemento, se não, não há sucessor para x
 }
 
-Node * bst_predecessor(Node *x) // o maior valor menor que x, irá seguir a mesma lógica do sucessor só que ao contrário
-{
+/**
+ * @brief Busca e retorna o nó com a maior chave menor que a chave de x (o predecessor em-ordem de x)
+ * 
+ * @param[in] x Ponteiro para o nó sucessor em-ordem do nó que será buscado.
+ * 
+ * @return Ponteiro para o nó predecessor em-ordem de x, ou NULL caso nenhum predecessor seja encontrado.
+ */
+Node *bst_predecessor(Node *x) {
     if (x->left != NULL) { 
         return bst_maximum(x->left);
     }
+
     Node *y = x->parent;
     while (y != NULL && x == y->left) {
         x = y;
         y = y->parent;
     }
+
     return y;
 }
 
-Node * bst_search(Node *x, int key) // irá procurar uma chave na arvore
-{
+/**
+ * @brief Busca por um nó em uma sub-árvore BST que contenha uma chave específica.
+ * 
+ * @param[in] x Ponteiro para o nó raíz da sub-árvore BST onde a busca será realizada.
+ * @param[in] key Chave do nó que será buscado.
+ * 
+ * @return Ponteiro para o nó encontrado, ou NULL caso nenhum nó contendo a chave especificada seja encontrado.
+ */
+Node *bst_search(Node *x, int key) {
     while (x != NULL && key != x->key) { // enquanto existe nó que não é a chave
         if (key < x->key) { // se chave for menor
             x = x->left;
@@ -143,11 +203,18 @@ Node * bst_search(Node *x, int key) // irá procurar uma chave na arvore
             x = x->right;
         }
     }
+
     return x;
 }
 
-void transplant(BST *T, Node *u, Node *v) // vai substituir uma subárvore de raiz u por outra de raiz v
-{
+/**
+ * @brief Substitui uma sub-árvore BST de raíz `u` por uma sub-árvore BST de raíz `v`.
+ * 
+ * @param[in] T Ponteiro para a árvore BST onde as sub-árvores estão contidas.
+ * @param[in] u Ponteiro para o nó raíz da sub-árvore BST original.
+ * @param[in] v Ponteiro para o novo nó raíz da sub-árvore BST.
+ */
+void transplant(BST *T, Node *u, Node *v) {
     if (u->parent == NULL) { // se u for a raiz, v vai virar a nova raiz
         T->root = v;
     } else if (u == u->parent->left) { // se u for filho esquerdo seu pai aponta pra v
@@ -161,8 +228,13 @@ void transplant(BST *T, Node *u, Node *v) // vai substituir uma subárvore de ra
     }
 }
 
-void bst_delete(BST *T, Node *z) // vai remover um nó
-{
+/**
+ * @brief Remove um nó de uma árvore BST.
+ * 
+ * @param[in] T Ponteiro para a árvore BST onde o nó será removido.
+ * @param[in] z Ponteiro para o nó que será removido.
+ */
+void bst_delete(BST *T, Node *z) {
     if (z->left == NULL) {
         transplant(T, z, z->right);
     } else if (z->right == NULL) {
@@ -184,46 +256,102 @@ void bst_delete(BST *T, Node *z) // vai remover um nó
     node_free(z);
 }
 
-int bst_size(Node *x) // para saber o tamanho da arvore
-{
+/**
+ * @brief Calcula recursivamente o tamanho (quantidade de nós) de uma sub-árvore BST.
+ * 
+ * @param[in] x Ponteiro para a raíz da sub-árvore BST a ser calculada.
+ * 
+ * @return Inteiro positivo representando a quantidade de nós existentes na sub-árvore BST fornecida.
+ */
+int bst_size(Node *x) {
     if (x == NULL) // se não existe retorna 0
         return 0;
-    else // conta de forma recursiva o nó autal com o nó da direita e esquerda
+    else // conta de forma recursiva o nó atual com o nó da direita e esquerda
         return 1 + bst_size(x->left) + bst_size(x->right);
 }
 
-void bst_printRec(Node *nd) // printa a arvore
-{
-    if (nd) {
-        bst_printRec(nd->left);
-        printf("%02d ", nd->key);
-        bst_printRec(nd->right);
+/**
+ * @brief Imprime recursivamente uma representação textual de uma sub-árvore BST.
+ * 
+ * @param[in] n Nó raiz da sub-árvore a ser impressa.
+ */
+void bst_printRec(Node *n) {
+    if (n) {
+        bst_printRec(n->left);
+        printf("%02d ", n->key);
+        bst_printRec(n->right);
     }
 }
 
-void bst_print(BST *T) // printa a arvore
-{
+/**
+ * @brief Imprime recursivamente uma representação textual de uma árvore BST.
+ * 
+ * @param[in] T Ponteiro para a BST a ser impressa.
+ */
+void bst_print(BST *T) {
     printf("BST: [ ");
     bst_printRec(T->root);
     printf("]\n");
 }
 
-void bst_store(Node *nd, int *arr, int *index) // percorre a arvore e armazena em ordem em um vetor de forma recursiva
-{
+/**
+ * @brief Percorre uma sub-árvore BST em-ordem e armazena suas chaves em um vetor.
+ * 
+ * @param[in] nd Ponteiro para o nó raiz da sub-árvore a ser percorrida.
+ * @param[out] arr Ponteiro para um vetor (já alocado) onde as chaves serão armazenadas.
+ * 
+ * @param[in,out] index Ponteiro para a variável inteira que controla a posição atual no vetor. 
+ *                      Deve apontar para um valor inicial de 0 na primeira chamada.
+ */
+void bst_store(Node *nd, int *arr, int *index) {
     if (nd) {
         bst_store(nd->left, arr, index); 
-        arr[(*index)++] = nd->key; // vai obter o indice atual, armazenar a chave no vetor e se incrementar após (também não entendi) 
+        arr[(*index)++] = nd->key; // vai obter o indice atual, armazenar a chave no vetor e se incrementar após (também não entendi)
         bst_store(nd->right, arr, index);
     }
 }
 
-int int_comp(const void *a, const void *b) // não entendi pra que isso serve
-{
+/**
+ * @brief Função de comparação para ordenação crescente de inteiros.
+ * 
+ * @details Converte os ponteiros genéricos (void *) para ponteiros de inteiros (int *) e 
+ *          subtrai os valores apontados para determinar a ordem relativa entre eles.
+ * 
+ * @param[in] a Ponteiro genérico para o primeiro elemento a ser comparado.
+ * @param[in] b Ponteiro genérico para o segundo elemento a ser comparado.
+ * 
+ * @return Resultado da comparação:
+ * 
+ *         - Um inteiro negativo (se `a` for menor que `b`);
+ * 
+ *         - `0` (se `a` for igual a `b`);
+ * 
+ *         - Um inteiro positivo (se `a` for maior que `b`).
+ */
+int int_comp(const void *a, const void *b) {
     return (*(int *)a - *(int *)b);
 }
 
-bool bst_check(Node *nd, const int * const data, const int N) // verifica se as cahves da arvore são as mesma armazenadas em data
-{
+/**
+ * @brief Verifica se uma sub-árvore BST possui exatamente as mesmas chaves
+ *        (considerando-se um percurso em-ordem) de um vetor de referência.
+ * 
+ * @details A validação se inicia comparando o tamanho da árvore com o do vetor.
+ *          Após isso, o vetor de referência é copiado e ordenado.
+ *          Por fim, extrai as chaves da árvore (também em-ordem)
+ *          e realiza uma comparação elemento a elemento.
+ * 
+ * @param[in] nd Ponteiro para o nó raiz da sub-árvore BST a ser verificada.
+ * @param[in] data Ponteiro constante para um vetor contendo as chaves de referência.
+ * @param[in] N Quantidade de elementos contidos no vetor de referência.
+ * 
+ * @return Resultado da validação da sub-árvore.
+ * 
+ * @retval - `true`: se a sub-árvore contiver exatamente as mesmas chaves em-ordem do vetor;
+ * @retval - `false`: caso o tamanho da sub-árvore seja diferente ou alguma
+ *           chave não corresponda ao seu respectivo valor de referência.
+ */
+bool bst_check(Node *nd, const int *const data, const int N) {
     const int tsize = bst_size(nd); // quantos nos tem
 
     if (tsize != N) { // se o quantidade é diferente nao sao iguais
@@ -258,15 +386,24 @@ bool bst_check(Node *nd, const int * const data, const int N) // verifica se as 
     return match;
 }
 
-void bst_printTreeRec(Node *root, int space) // mas uma rotina para imprimir a arvore no terminal, não sei se é preciso explicar mesmo
-{
+/**
+ * @brief Imprime uma representação textual da estrutura geometrica completa de uma sub-árvore BST deitada no terminal.
+ * 
+ * @details Utiliza um percurso invertido (Direita -> Raiz -> Esquerda) e uma identação progressiva
+ *          para desenhar a árvore "deitada". A raiz aparece na margem esquerda do terminal,
+ *          a sub-árvore direita cresce para a parte de cima e a esquerda para a parte de baixo.
+ * 
+ * @param[in] root Ponteiro para o nó raiz da sub-árvore a ser impressa.
+ * @param[in] space Quantidade atual de espaços (identação) para o nível de profundidade atual.
+ */
+void bst_printTreeRec(Node *root, int space) {
     if (root != NULL) {
-        space += 4;
+        space += TAB_SIZE;
 
         bst_printTreeRec(root->right, space);
 
         printf("\n");
-        for (int i = 4; i < space; i++) {
+        for (int i = TAB_SIZE; i < space; i++) {
             printf(" ");
         }
         printf("%02d\n", root->key);
@@ -275,9 +412,13 @@ void bst_printTreeRec(Node *root, int space) // mas uma rotina para imprimir a a
     }
 }
 
-void bst_printTree(Node *root) // mesma coisa
-{
-    bst_printTreeRec(root, 0);
+/**
+ * @brief Imprime uma representação textual da estrutura geometrica completa de uma árvore BST deitada no terminal.
+ * 
+ * @param[in] T Ponteiro para a árvore BST a ser representada.
+ */
+void bst_printTree(BST *T) {
+    bst_printTreeRec(T->root, 0);
 }
 
 
@@ -288,15 +429,30 @@ void bst_printTree(Node *root) // mesma coisa
  * um arranjo em ordem lexicográfica.
  */
 
-void swap(int *a, int *b) // vai trocar dois valores, valor de a vai pr b e valor de b vai pra a
-{
+/**
+ * @brief Troca o valor de duas variáveis inteiras.
+ * 
+ * @param[in] a Ponteiro para a primeira variável inteira a ser permutada.
+ * @param[in] b Ponteiro para a segunda variável inteira a ser permutada.
+ */
+void swap(int *a, int *b) {
     const int temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void perm_invert(int *arr, int inicio, int fim) // inverte um vetor em certas partes dele
-{
+/**
+ * @brief Inverte a ordem dos elementos de um sub-arranjo (uma parte) específico dentro de um vetor.
+ * 
+ * @details Utiliza dois índices que convergem para o centro do sub-arranjo. A cada iteração,
+ *          os elementos das extremidades opostas são trocados utilizando a função `swap()`.
+ * 
+ * @param[in,out] arr Ponteiro para o vetor contendo o sub-arranjo a ser invertido
+ *                    (a alteração é feita no próprio vetor original).
+ * @param[in] inicio Índice inicial (inclusivo) do sub-arranjo onde a inversão começará.
+ * @param[in] fim Índice final (inclusivo) do sub-arranjo onde a inversão terminará.
+ */
+void perm_invert(int *arr, int inicio, int fim) {
     while (inicio < fim) {
         swap(&arr[inicio], &arr[fim]);
         inicio++;
@@ -304,8 +460,27 @@ void perm_invert(int *arr, int inicio, int fim) // inverte um vetor em certas pa
     }
 }
 
-bool perm_next(int *arr, int tamanho) // essa rotina deve encontrar todas as permutações usando as duas rotinas anteriores para ajudar, agora u funcionamento do código não entendi direito
-{
+/**
+ * @brief Gera a próxima permutação lexicográfica de um arranjo.
+ * 
+ * @details Implementa o algoritmo de Narayana Pandita. O algoritmo 
+ *          se inicia encontrando o maior índice `i` tal que `arr[i] < arr[i+1]`; 
+ *          Depois, encontra o maior índice `j` > `i` onde `arr[j] > arr[i]`;
+ *          Posteriormente, troca os elementos de `i` e `j` usando `swap()`;
+ *          Por fim, inverte a ordem do sufixo a partir de `i+1` usando `perm_invert()`.
+ *          Se o arranjo estiver em ordem decrescente (a última permutação
+ *          possível), a função retorna false.
+ * 
+ * @param[in,out] arr Ponteiro para o arranjo de inteiros que será permutado.
+ * @param[in] tamanho Quantidade de elementos contidos no arranjo.
+ * 
+ * @return Status da geração da nova permutação.
+ * 
+ * @retval - `true`: se uma nova permutação foi gerada com sucesso;
+ * @retval - `false`: se não houver mais permutações possíveis (o arranjo 
+ *         chegou à sua ordem reversa máxima).
+ */
+bool perm_next(int *arr, int tamanho) {
     int i = tamanho - 2;
 
     while (i >= 0 && arr[i] >= arr[i + 1]) {
@@ -333,8 +508,13 @@ bool perm_next(int *arr, int tamanho) // essa rotina deve encontrar todas as per
  * Funções Auxiliares
  */
 
-void data_print(const int * const data, const int N) // imprime os valores em data
-{
+/**
+ * @brief Imprime uma representação textual de um arranjo de inteiros ("data").
+ * 
+ * @param[in] data Ponteiro para o arranjo a ser impresso.
+ * @param[in] N Quantidade de elementos contidos no arranjo `data`.
+ */
+void data_print(const int *const data, const int N) {
     printf("data: [ ");
     for (int i = 0; i < N; i++) {
         printf("%02d ", data[i]);
@@ -342,8 +522,21 @@ void data_print(const int * const data, const int N) // imprime os valores em da
     printf("]\n");
 }
 
-int arr_remove(int *arr, int N, int value) // ajuda a remover certo valor do array
-{
+/**
+ * @brief Remove todas as ocorrências de um valor específico em um arranjo.
+ * 
+ * @details A remoção é feita sobrescrevendo o elemento alvo e deslocando todos os 
+ *          elementos subsequentes uma posição para a esquerda. O índice do loop é 
+ *          decrementado (i--) após uma remoção para que valores adjacentes idênticos 
+ *          não sejam ignorados após um deslocamento.
+ * 
+ * @param[in,out] arr Ponteiro para o arranjo onde a remoção ocorrerá.
+ * @param[in] N Tamanho atual do arranjo.
+ * @param[in] value O valor numérico que será procurado e removido do arranjo.
+ * 
+ * @return O novo tamanho do arranjo (`N` - a quantidade de elementos removidos).
+ */
+int arr_remove(int *arr, int N, int value) {
     for (int i = 0; i < N; i++) { // percorre o vetor até encontrar indice do mesmo valor e apaga ele
         if (arr[i] == value) {
             for (int j = i; j < N - 1; j++) {
@@ -358,7 +551,6 @@ int arr_remove(int *arr, int N, int value) // ajuda a remover certo valor do arr
 }
 
 int main() {
-
     int DATA_INSERT[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
     int DATA_REMOVE[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
     const int N = 5; // tamanho dos arranjos de inserção e remoção
@@ -389,7 +581,7 @@ int main() {
             }
             
             printf("Arvore apos todas as INSERCOES:\n");
-            bst_printTree(T->root);
+            bst_printTree(T);
 
             printf("Dados para Remocao:\n\t");
             data_print(data_remove, N);
@@ -406,7 +598,7 @@ int main() {
             }
             
             printf("Arvore apos todas as REMOCOES:\n");
-            bst_printTree(T->root);
+            bst_printTree(T);
 
             free(arr);
             bst_free(T);
