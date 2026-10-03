@@ -126,6 +126,14 @@ void right_rotate(BST *T, Node *n) {
     n->left = RleftN;
     leftN->right = n;
 
+    // Após a rotação, `n` se tornou filho de `leftN`
+    n->parent = leftN;
+    
+    // Se a subárvore `RleftN` existir, ela mudou de lado e seu novo pai é `n`
+    if (RleftN) {
+        RleftN->parent = n;
+    }
+
     // Atualiza as alturas
     update_height(n);
     update_height(leftN);
@@ -147,6 +155,14 @@ void left_rotate(BST *T, Node *n) {
     // Transfere a subárvore direita de `leftN` para a subárvore esquerda de `n`
     n->right = LrightN;
     rightN->left = n;
+
+    // Após a rotação, `n` se tornou filho de `rightN`
+    n->parent = rightN;
+    
+    // Se a subárvore `LrightN` existir, ela mudou de lado e seu novo pai é `n`
+    if (LrightN) {
+        LrightN->parent = n;
+    }
 
     // Atualiza as alturas
     update_height(n);
@@ -776,7 +792,7 @@ int main() {
             for (int i = 0; i < N; i++) {
                 printf("Inserindo: %02d\n", data_insert[i]);
                 Node *nd = node_alloc(data_insert[i]);
-                bst_insert(T, nd);
+                avl_insert(T, nd);
                 bst_print(T);
                 assert(bst_check(T->root, data_insert, i + 1));
             }
@@ -792,7 +808,7 @@ int main() {
             
             for (int i = 0; i < N; i++) {
                 printf("Removendo: %02d\n", data_remove[i]);
-                bst_delete(T, bst_search(T->root, data_remove[i]));
+                avl_delete(T, bst_search(T->root, data_remove[i]));
                 bst_print(T);
                 asize = arr_remove(arr, asize, data_remove[i]);
                 assert(bst_check(T->root, arr, asize));
