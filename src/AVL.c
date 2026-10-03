@@ -875,7 +875,7 @@ bool valid_avl(Node *n) {
  * @retval - `5`: Inconsistência de dados - `bst_check` falhou após uma REMOÇÃO;
  * @retval - `6`: Estrutura inválida - `valid_avl` falhou após uma REMOÇÃO.
  */
-bool brute_force_avl_validation(const int *data_base, const int N, unsigned long long *tested_count) {
+int brute_force_avl_validation(const int *data_base, const int N, unsigned long long *tested_count) {
     int status = 0; // Inicializado com "Sucesso"
 
     int *data_insert = (int *) malloc(sizeof(int) * N);
