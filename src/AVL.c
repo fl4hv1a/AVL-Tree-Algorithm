@@ -109,6 +109,12 @@ void transplant(BST *T, Node *u, Node *v) {
     }
 }
 
+/**
+ * @brief Realiza uma rotação à direita em um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizada a rotação.
+ * @param[in] n Ponteiro para o nó que será rotacionado.
+ */
 void right_rotate(BST *T, Node *n) {
     Node *leftN = n->left;
 
@@ -123,6 +129,12 @@ void right_rotate(BST *T, Node *n) {
     update_height(leftN);
 }
 
+/**
+ * @brief Realiza uma rotação à esquerda em um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizada a rotação.
+ * @param[in] n Ponteiro para o nó que será rotacionado.
+ */
 void left_rotate(BST *T, Node *n) {
     Node *rightN = n->right;
 
@@ -137,6 +149,12 @@ void left_rotate(BST *T, Node *n) {
     update_height(rightN);
 }
 
+/**
+ * @brief Rebalanceia, por meio de rotações, um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizado o rebalanceamento.
+ * @param[in] n Ponteiro para o nó que será rebalanceado.
+ */
 void avl_node_rebalance(BST *T, Node *n) {
     int balance = get_balance(n);
     if (balance > ALLOWED_IMBALANCE) {
@@ -154,9 +172,14 @@ void avl_node_rebalance(BST *T, Node *n) {
     }
 }
 
+/**
+ * @brief Rebalanceia uma árvore AVL após uma modificação estrutural.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde acontecerá o rebalanceamento.
+ * @param[in] n Ponteiro para o nó mais profundo onde o balanceamento pode ter sido alterado.
+ */
 void avl_balance(BST *T, Node *n) {
-    // Substitui o "desempilhamento" recursivo de Weiss por um loop subindo pelos pais
-    while (n != NULL) {
+    while (n) {
         update_height(n); // Atualiza a altura do nó atual
         
         avl_node_rebalance(T, n); // Rebalanceia o nó atual
@@ -291,6 +314,20 @@ void bst_insert(BST *T, Node *z) {
 }
 
 /**
+ * @brief Insere um novo nó em uma árvore AVL e refaz o balanceamento.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde o nó deve ser inserido.
+ * @param[in] z Ponteiro para o nó a ser inserido.
+ */
+void avl_insert(BST *T, Node *z) {
+    bst_insert(T, z);
+
+    // Inicia a verificação de balanceamento
+    // Começa a partir do nó inserido e sobe rebalanceando até a raiz
+    avl_balance(T, z);
+}
+
+/**
  * @brief Busca e retorna o nó com a menor chave maior que a chave de x (o sucessor em-ordem de x)
  * 
  * @param[in] x Ponteiro para o nó predecessor em-ordem do nó que será buscado.
@@ -353,23 +390,31 @@ Node *bst_search(Node *x, int key) {
 }
 
 /**
- * @brief Remove um nó de uma árvore BST.
+ * @brief Remove e desaloca um nó de uma árvore BST.
  * 
  * @param[in] T Ponteiro para a árvore BST onde o nó será removido.
  * @param[in] z Ponteiro para o nó que será removido.
+ * 
+ * @return Ponteiro para o nó mais profundo da árvore onde o balanceamento
+ *         pode ter sido quebrado (caso `T` seja uma AVL).
  */
-void bst_delete(BST *T, Node *z) {
+Node *bst_delete(BST *T, Node *z) {
+    Node *fix_node_pin = z->parent; // Serve para rastrear onde o balanceamento possivelmente mudará (caso `T` seja uma AVL)
+    
     if (z->left == NULL) {
         transplant(T, z, z->right);
     } else if (z->right == NULL) {
         transplant(T, z, z->left);
     } else {
-        Node *y = bst_minimum(z->right);
+        Node *y = bst_successor(z);
 
         if (y->parent != z) {
+            fix_node_pin = y->parent; // Se o sucessor não é filho direto, o rebalanceamento começa no pai do sucessor
             transplant(T, y, y->right);
             y->right = z->right;
             y->right->parent = y;
+        } else {
+            fix_node_pin = y; // Se o sucessor era filho direto, o rebalanceamento começa no sucessor
         }
 
         transplant(T, z, y);
@@ -378,6 +423,22 @@ void bst_delete(BST *T, Node *z) {
     }
 
     node_free(z);
+
+    return fix_node_pin;
+}
+
+/**
+ * @brief Remove, rebalanceia e desaloca um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde o nó será removido.
+ * @param[in] z Ponteiro para o nó que será removido.
+ */
+void avl_delete(BST *T, Node *z) {
+    // Primeiro faz uma remoção BST simples
+    Node *fix_node_pin = bst_delete(T, z);
+
+    // Depois começa o rebalanceamento subindo até chegar na raiz
+    avl_balance(T, fix_node_pin);
 }
 
 /**
