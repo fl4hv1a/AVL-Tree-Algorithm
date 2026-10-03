@@ -4,7 +4,9 @@
 #include <string.h>
 #include <assert.h>
 
-#define TAB_SIZE 4 // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
+#define ALLOWED_IMBALANCE 1 // O desbalanceamento máximo permitido em uma AVL
+#define TAB_SIZE 4          // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
+// #define SHOW_STEPS       // A existência dessa diretiva controla a impressão detalhada dos testes
 
 typedef struct Node {
     int key;
@@ -13,6 +15,10 @@ typedef struct Node {
     struct Node *right;
     int height; // Distância até o nó folha mais profundo entre as subárvores esquerda e direita
 } Node;
+
+typedef struct BinarySearchTree {
+    Node *root;
+} BST;
 
 /**
  * @brief Encontra o maior entre dois inteiros.
@@ -75,8 +81,134 @@ void update_height(Node *n) {
  * @retval - Um valor `positivo`: Se a altura da subárvore esquerda for maior que a direita.
  */
 int get_balance(Node *n) {
-    if (!n) return 0;
+    if (!n) return 0; // Se o nó for nulo, já está "balanceado"
     return height(n->left) - height(n->right);
+}
+
+/**
+ * @brief Substitui uma subárvore BST de raíz `u` por uma subárvore BST de raíz `v`.
+ * 
+ * @param[in] T Ponteiro para a árvore BST onde as subárvores estão contidas.
+ * @param[in] u Ponteiro para o nó raíz da subárvore BST original.
+ * @param[in] v Ponteiro para o novo nó raíz da subárvore BST.
+ */
+void transplant(BST *T, Node *u, Node *v) {
+    if (u == T->root) {
+        // Se `u` era a raiz, `v` vai virar a nova raiz
+        T->root = v;
+    } else if (u == u->parent->left) {
+        // Se `u` era filho à esquerda, seu pai agora aponta para `v`
+        u->parent->left = v;
+    } else {
+        // Se `u` era filho à direita, seu pai agora aponta pra `v`
+        u->parent->right = v;
+    }
+
+    if (v) {
+        // Se `v` for não-nulo, definimos o novo pai de `v`
+        v->parent = u->parent;
+    }
+}
+
+/**
+ * @brief Realiza uma rotação à direita em um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizada a rotação.
+ * @param[in] n Ponteiro para o nó que será rotacionado.
+ */
+void right_rotate(BST *T, Node *n) {
+    Node *leftN = n->left; // Guarda o filho à esquerda de `n`
+
+    transplant(T, n, leftN); // Insere o filho à esquerda de `n` no lugar do próprio `n`
+
+    Node *RleftN = leftN->right; // Guarda o filho à direita do filho à esquerda de `n`
+    
+    // Transfere a subárvore direita de `leftN` para a subárvore esquerda de `n`
+    n->left = RleftN;
+    leftN->right = n;
+
+    // Após a rotação, `n` se tornou filho de `leftN`
+    n->parent = leftN;
+    
+    // Se a subárvore `RleftN` existir, ela mudou de lado e seu novo pai é `n`
+    if (RleftN) {
+        RleftN->parent = n;
+    }
+
+    // Atualiza as alturas
+    update_height(n);
+    update_height(leftN);
+}
+
+/**
+ * @brief Realiza uma rotação à esquerda em um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizada a rotação.
+ * @param[in] n Ponteiro para o nó que será rotacionado.
+ */
+void left_rotate(BST *T, Node *n) {
+    Node *rightN = n->right; // Guarda o filho à direita de `n`
+
+    transplant(T, n, rightN); // Insere o filho à direita de `n` no lugar do próprio `n`
+
+    Node *LrightN = rightN->left; // Guarda o filho à esquerda do filho à direita de `n`
+
+    // Transfere a subárvore direita de `leftN` para a subárvore esquerda de `n`
+    n->right = LrightN;
+    rightN->left = n;
+
+    // Após a rotação, `n` se tornou filho de `rightN`
+    n->parent = rightN;
+    
+    // Se a subárvore `LrightN` existir, ela mudou de lado e seu novo pai é `n`
+    if (LrightN) {
+        LrightN->parent = n;
+    }
+
+    // Atualiza as alturas
+    update_height(n);
+    update_height(rightN);
+}
+
+/**
+ * @brief Rebalanceia, por meio de rotações, um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde será realizado o rebalanceamento.
+ * @param[in] n Ponteiro para o nó que será rebalanceado.
+ */
+void avl_node_rebalance(BST *T, Node *n) {
+    int balance = get_balance(n);
+    if (balance > ALLOWED_IMBALANCE) {
+        if (get_balance(n->left) < 0) { 
+            left_rotate(T, n->left); // Metade da rotação dupla à direita
+        }
+
+        right_rotate(T, n); // Rotação simples à direita
+    } else if (balance < -ALLOWED_IMBALANCE) {
+        if (get_balance(n->right) > 0) {
+            right_rotate(T, n->right); // Metade da rotação dupla à esquerda
+        }
+
+        left_rotate(T, n); // Rotação simples à esquerda
+    }
+    // Se `-ALLOWED_IMBALANCE < balance < ALLOWED_IMBALANCE`:
+    //      `n` já está balanceado, então não fazemos nada
+}
+
+/**
+ * @brief Rebalanceia uma árvore AVL após uma modificação estrutural.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde acontecerá o rebalanceamento.
+ * @param[in] n Ponteiro para o nó mais profundo onde o balanceamento pode ter sido alterado.
+ */
+void avl_balance(BST *T, Node *n) {
+    while (n) {
+        update_height(n); // Atualiza a altura do nó atual
+        
+        avl_node_rebalance(T, n); // Rebalanceia o nó atual
+        
+        n = n->parent; // Sobe para o próximo nó ancestral
+    }
 }
 
 /**
@@ -141,10 +273,6 @@ Node *bst_maximum(Node *x) {
     return y;
 }
 
-typedef struct BinarySearchTree {
-    struct Node *root;
-} BST;
-
 /**
  * @brief Aloca uma BST vazia na memória heap.
  * 
@@ -185,27 +313,46 @@ void bst_free(BST *T) {
  * @param[in] z Ponteiro para o nó a ser inserido.
  */
 void bst_insert(BST *T, Node *z) {
-    Node *y = NULL; // y vai acompanhar o pai de onde inserir
-    Node *x = T->root; // começa na raiz
+    Node *y = NULL; // `y` vai acompanhar o pai de onde inserir
+    Node *x = T->root; // `x` vai rastrear a posição atual durante a busca na árvore
 
-    while (x != NULL) {
-        y = x; // guarda o nó atual em y
-        if (z->key < x->key) { //se a chave é menor desce na arvore pela esquerda
+    while (x) {
+        y = x; // Guarda o nó atual em `y`
+        if (z->key < x->key) {
+            // Se a chave é menor, descemos pela subárvore esquerda
             x = x->left;
-        } else { // se for maior desce pela direita
+        } else {
+            // Se a chave é maior, descemos pela subárvore direita
             x = x->right;
         }
     }
 
-    z->parent = y;
+    z->parent = y; // Define o pai de `z` como `y`
 
-    if (y == NULL) { // se no caso de não existir pai, z vira a raiz
+    if (!y) {
+        // Se o pai de `z` for nulo, `T` está vazia, então `z` vira a raiz
         T->root = z;
     } else if (z->key < y->key) {
+        // Se `z` tiver uma chave menor que a do seu pai, inserimos `z` à esquerda
         y->left = z;
     } else {
+        // Se `z` tiver uma chave maior que a do seu pai, inserimos `z` à direita
         y->right = z;
     }
+}
+
+/**
+ * @brief Insere um novo nó em uma árvore AVL e refaz o balanceamento.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde o nó deve ser inserido.
+ * @param[in] z Ponteiro para o nó a ser inserido.
+ */
+void avl_insert(BST *T, Node *z) {
+    // Começa fazendo uma inserção BST comum
+    bst_insert(T, z);
+
+    // Começa a rebalancear a partir do nó inserido subindo até a raiz
+    avl_balance(T, z);
 }
 
 /**
@@ -216,17 +363,18 @@ void bst_insert(BST *T, Node *z) {
  * @return Ponteiro para o nó sucessor em-ordem de x, ou NULL caso nenhum sucessor seja encontrado.
  */
 Node *bst_successor(Node *x) {
-    if (x->right != NULL) { // se ele tiver um filho no lado direito o sucessor vai estar por lá
+    if (x->right) { // Se ele tiver um filho à direita, o sucessor vai estar lá
         return bst_minimum(x->right);
     }
 
-    Node *y = x->parent; // se não tiver sobe e procura o sucessor a partir do nó pai
-    while (y != NULL && x == y->right) {
+    // Se não tinha filho à direita, sobe e procura o sucessor a partir dos nós ancestrais
+    Node *y = x->parent;
+    while (y && x == y->right) { // Enquanto `y` for não-nulo e `x` for filho à direita de `y`
         x = y;
         y = y->parent;
     }
 
-    return y; // o loop vai terminar quando o y tiver o proximo elemento, se não, não há sucessor para x
+    return y;
 }
 
 /**
@@ -237,12 +385,12 @@ Node *bst_successor(Node *x) {
  * @return Ponteiro para o nó predecessor em-ordem de x, ou NULL caso nenhum predecessor seja encontrado.
  */
 Node *bst_predecessor(Node *x) {
-    if (x->left != NULL) { 
+    if (x->left) { 
         return bst_maximum(x->left);
     }
 
     Node *y = x->parent;
-    while (y != NULL && x == y->left) {
+    while (y && x == y->left) {
         x = y;
         y = y->parent;
     }
@@ -259,10 +407,12 @@ Node *bst_predecessor(Node *x) {
  * @return Ponteiro para o nó encontrado, ou NULL caso nenhum nó contendo a chave especificada seja encontrado.
  */
 Node *bst_search(Node *x, int key) {
-    while (x != NULL && key != x->key) { // enquanto existe nó que não é a chave
-        if (key < x->key) { // se chave for menor
+    while (x && key != x->key) { // Enquanto `x` for não-nulo e não tiver a chave desejada
+        if (key < x->key) {
+            // Se a chave desejada for menor, desce pela subárvore esquerda
             x = x->left;
-        } else { // se a chave for maior
+        } else {
+            // Se a chave desejada for maior, desce pela subárvore direita
             x = x->right;
         }
     }
@@ -271,44 +421,33 @@ Node *bst_search(Node *x, int key) {
 }
 
 /**
- * @brief Substitui uma subárvore BST de raíz `u` por uma subárvore BST de raíz `v`.
- * 
- * @param[in] T Ponteiro para a árvore BST onde as subárvores estão contidas.
- * @param[in] u Ponteiro para o nó raíz da subárvore BST original.
- * @param[in] v Ponteiro para o novo nó raíz da subárvore BST.
- */
-void transplant(BST *T, Node *u, Node *v) {
-    if (u->parent == NULL) { // se u for a raiz, v vai virar a nova raiz
-        T->root = v;
-    } else if (u == u->parent->left) { // se u for filho esquerdo seu pai aponta pra v
-        u->parent->left = v; 
-    } else {
-        u->parent->right = v; // se u for o filho direito o pai aponta pra v
-    }
-
-    if (v != NULL) { // faz o pai de v apontar para o mesmo lugar
-        v->parent = u->parent;
-    }
-}
-
-/**
- * @brief Remove um nó de uma árvore BST.
+ * @brief Remove e desaloca um nó de uma árvore BST.
  * 
  * @param[in] T Ponteiro para a árvore BST onde o nó será removido.
  * @param[in] z Ponteiro para o nó que será removido.
+ * 
+ * @return Ponteiro para o nó mais profundo da árvore onde o balanceamento
+ *         pode ter sido quebrado (caso `T` seja uma AVL).
  */
-void bst_delete(BST *T, Node *z) {
+Node *bst_delete(BST *T, Node *z) {
+    Node *fix_node_pin = z->parent; // Serve para rastrear onde o balanceamento possivelmente mudará (caso `T` seja uma AVL)
+    
     if (z->left == NULL) {
+        // Não tem subárvore à esquerda, então colocamos a subárvore direta no lugar de `z`
         transplant(T, z, z->right);
     } else if (z->right == NULL) {
+        // Não tem subárvore à direita, então colocamos a subárvore esquerda no lugar de `z`
         transplant(T, z, z->left);
-    } else {
-        Node *y = bst_minimum(z->right);
+    } else { // Tem duas subárvores, então colocaremos o sucessor em-ordem de `z` no lugar dele
+        Node *y = bst_successor(z); // Menor elemento da subárvore direita de `z`
 
         if (y->parent != z) {
+            fix_node_pin = y->parent; // Se o sucessor não é filho direto, o rebalanceamento começa no pai do sucessor
             transplant(T, y, y->right);
             y->right = z->right;
             y->right->parent = y;
+        } else {
+            fix_node_pin = y; // Se o sucessor era filho direto, o rebalanceamento começa no sucessor
         }
 
         transplant(T, z, y);
@@ -317,6 +456,22 @@ void bst_delete(BST *T, Node *z) {
     }
 
     node_free(z);
+
+    return fix_node_pin;
+}
+
+/**
+ * @brief Remove, rebalanceia e desaloca um nó de uma árvore AVL.
+ * 
+ * @param[in] T Ponteiro para a árvore AVL onde o nó será removido.
+ * @param[in] z Ponteiro para o nó que será removido.
+ */
+void avl_delete(BST *T, Node *z) {
+    // Primeiro faz uma remoção BST simples
+    Node *fix_node_pin = bst_delete(T, z);
+
+    // Depois começa o rebalanceamento subindo até chegar na raiz
+    avl_balance(T, fix_node_pin);
 }
 
 /**
@@ -327,9 +482,9 @@ void bst_delete(BST *T, Node *z) {
  * @return Inteiro positivo representando a quantidade de nós existentes na subárvore BST fornecida.
  */
 int bst_size(Node *x) {
-    if (x == NULL) // se não existe retorna 0
+    if (!x) // Se `x` for nulo, a subárvore está vazia
         return 0;
-    else // conta de forma recursiva o nó atual com o nó da direita e esquerda
+    else // Conta recursivamente o tamanho atual com o da direita e da esquerda
         return 1 + bst_size(x->left) + bst_size(x->right);
 }
 
@@ -364,12 +519,12 @@ void bst_print(BST *T) {
  * @param[out] arr Ponteiro para um vetor (já alocado) onde as chaves serão armazenadas.
  * 
  * @param[in,out] index Ponteiro para a variável inteira que controla a posição atual no vetor. 
- *                      Deve apontar para um valor inicial de 0 na primeira chamada.
+ *                      Deve apontar para um valor inicial de `0` na primeira chamada.
  */
 void bst_store(Node *nd, int *arr, int *index) {
     if (nd) {
         bst_store(nd->left, arr, index); 
-        arr[(*index)++] = nd->key; // vai obter o indice atual, armazenar a chave no vetor e se incrementar após (também não entendi)
+        arr[(*index)++] = nd->key; // Armazena a chave do nó atual e incrementa o índice "compartilhado" do arranjo
         bst_store(nd->right, arr, index);
     }
 }
@@ -385,12 +540,30 @@ void bst_store(Node *nd, int *arr, int *index) {
  * 
  * @return O resultado da comparação.
  * 
- * @retval - Um inteiro `negativo`: Se `a` for menor que `b`;
+ * @retval - `-1`: Se `a` for menor que `b`;
  * @retval - `0`: Se `a` for igual a `b`;
- * @retval - Um inteiro `positivo`: Se `a` for maior que `b`.
+ * @retval - `1`: Se `a` for maior que `b`.
+ * 
+ * Pode ser utilizado como "`int_comp(a, b)` `op` `0`"
+ *          (onde `op` é o operador de comparação desejado).
+ * 
+ *          Ex:
+ *
+ *              - "`int_comp(a, b)` `<` `0`" - Testa se `a < b`;
+ * 
+ *              - "`int_comp(a, b)` `>=` `0`" - Testa se `a >= b`;
  */
 int int_comp(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+    const int val_a = *(const int *)a; // Faz o "cast" pra "int *" e armazena o valor apontado por `a`
+    const int val_b = *(const int *)b; // Faz o "cast" pra "int *" e armazena o valor apontado por `b`
+
+    if (val_a < val_b) {
+        return -1;
+    } else if (val_a > val_b) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 /**
@@ -413,35 +586,36 @@ int int_comp(const void *a, const void *b) {
  *           chave não corresponda ao seu respectivo valor de referência.
  */
 bool bst_check(Node *nd, const int *const data, const int N) {
-    const int tsize = bst_size(nd); // quantos nos tem
+    const int tsize = bst_size(nd); // Quantos nós a subárvore tem
 
-    if (tsize != N) { // se o quantidade é diferente nao sao iguais
+    if (tsize != N) { // Se a quantidade é diferente, não podem ser iguais
         return false;
     }
-    if (N == 0) { // se ambos forem vazios é igual
+    if (N == 0) { // Se ambos forem vazios, são iguais
         return true;
     }
 
-    int *arr = (int *)malloc(sizeof(int) * N); // copia o vetor em data para arr
-    memcpy(arr, data, sizeof(int) * N);
-    qsort(arr, N, sizeof(int), int_comp); // ordena arr
+    int *arr = (int *) malloc(sizeof(int) * N);
+    memcpy(arr, data, sizeof(int) * N); // Cria uma cópia do arranjo `data` no arranjo `arr`
+    qsort(arr, N, sizeof(int), int_comp); // Ordena `arr`
 
-    int *tarr = (int *)malloc(sizeof(int) * tsize); // cria um vetor para a arvore
-    int index = 0;
-    bst_store(nd, tarr, &index); // colaca as chaves de tarr em ordem
+    int *tarr = (int *) malloc(sizeof(int) * tsize); // Arranjo para as chaves da árvore 
+    int index = 0; // `bst_store()` requer um índice inicial `0`
+    bst_store(nd, tarr, &index); // Armazena as chaves em-ordem da subárvore em `tarr`
 
     // for (int i = 0; i < N; i++)
     //    printf("(%02d ; %02d)\n", arr[i], tarr[i]);
     // fflush(stdout);
 
-    bool match = true; // assumme que já estão ordenador e percorre comparando até achar um valor que não seja igual
+    bool match = true; // Assume que já estão ordenados e percorre procurando algum valor que não seja igual
     for (int i = 0; i < N && match; i++) {
         if (arr[i] != tarr[i]) {
             match = false;
         }
     }
 
-    free(tarr); // libera os vetores
+    // Desaloca os arranjos auxiliares
+    free(tarr);
     free(arr);
 
     return match;
@@ -458,7 +632,7 @@ bool bst_check(Node *nd, const int *const data, const int N) {
  * @param[in] space Quantidade atual de espaços (identação) para o nível de profundidade atual.
  */
 void bst_printTreeRec(Node *root, int space) {
-    if (root != NULL) {
+    if (root) {
         space += TAB_SIZE;
 
         bst_printTreeRec(root->right, space);
@@ -598,11 +772,12 @@ void data_print(const int *const data, const int N) {
  * @return O novo tamanho do arranjo (`N` - a quantidade de elementos removidos).
  */
 int arr_remove(int *arr, int N, int value) {
-    for (int i = 0; i < N; i++) { // percorre o vetor até encontrar indice do mesmo valor e apaga ele
+    for (int i = 0; i < N; i++) {
         if (arr[i] == value) {
             for (int j = i; j < N - 1; j++) {
                 arr[j] = arr[j + 1];
             }
+
             N--;
             i--;
         }
@@ -611,66 +786,238 @@ int arr_remove(int *arr, int N, int value) {
     return N;
 }
 
-int main() {
-    int DATA_INSERT[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
-    int DATA_REMOVE[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
-    const int N = 5; // tamanho dos arranjos de inserção e remoção
-
-    int *data_insert, *data_remove;
-
-    data_insert = (int *)malloc(sizeof(int) * N);
-    memcpy(data_insert, DATA_INSERT, sizeof(int) * N);
+/**
+ * @brief Computa a altura real de uma subárvore percorrendo completamente todas as suas subárvores filhas.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser computada.
+ * 
+ * @return A altura real calculada.
+ * 
+ * @retval - Um inteiro `positivo`: Se `n` for uma subárvore não-nula;
+ * @retval - `-1`: Se `n` for uma subárvore vazia (`NULL`).
+ */
+int compute_real_height(Node *n) {
+    if (!n) return -1; // Passo base: subárvore vazia
     
+    // Passo recursivo: Cálcula as alturas das subárvores filhas
+    int left_h = compute_real_height(n->left);
+    int right_h = compute_real_height(n->right);
+    
+    return 1 + max(left_h, right_h);
+}
+
+/**
+ * @brief Verifica recursivamente se todos os nós de uma subárvore respeitam as propriedades BST.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser validada.
+ * @param[in] min_node Ponteiro para o nó que servirá como limite inferior exclusivo (ou `NULL` se não houver limite).
+ * @param[in] max_node Ponteiro para o nó que servirá como limite superior exclusivo (ou `NULL` se não houver limite).
+ * 
+ * @return Resultado da validação da subárvore.
+ * 
+ * @retval - `true`: Se todos os nós estiverem dentro dos limites permitidos;
+ * @retval - `false`: Caso algum nó seja encontrado fora dos limites permitidos.
+ */
+bool valid_bst(Node *n, Node *min_node, Node *max_node) {
+    if (!n) return true; // Uma subárvore vazia (`NULL`) já é uma BST válida
+
+    // A chave do nó atual deve ser maior que a do limite inferior
+    if (min_node && n->key <= min_node->key) return false;
+    
+    // A chave do nó atual deve ser menor que a do limite superior
+    if (max_node && n->key >= max_node->key) return false;
+
+    // Ao descer pela esquerda: o teto passa a ser o nó atual, o mínimo continua o mesmo
+    // Ao descer pela direita: o piso passa a ser o nó atual, o máximo continua o mesmo
+    return valid_bst(n->left, min_node, n) && valid_bst(n->right, n, max_node);
+}
+
+/**
+ * @brief Valida estruturalmente se uma subárvore obedece a todas as
+ *        propriedades de uma árvore AVL.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser validada.
+ * 
+ * @return Resultado da validação da subárvore.
+ * 
+ * @retval - `true`: Se for uma AVL perfeitamente válida;
+ * @retval - `false`: Caso alguma propriedade seja violada.
+ */
+bool valid_avl(Node *n) {
+    if (!n) return true; // Uma subárvore vazia é uma AVL válida
+
+    // Valida se a altura armazenada no nó atual condiz com a sua altura real
+    if (n->height != compute_real_height(n)) return false;
+
+    // Valida se o balanceamento retornado no nó atual condiz com o seu balanceamento real
+    int balance = get_balance(n);
+    if (balance != compute_real_height(n->left) - compute_real_height(n->right)) {
+        return false;
+    }
+
+    // Valida o fator de balanceamento
+    if (balance < -ALLOWED_IMBALANCE || balance > ALLOWED_IMBALANCE) {
+        return false; // O nó está desbalanceado, então não é uma AVL válida
+    }
+
+    // Valida se os ponteiros estão corretamente bidirecionais
+    if (n->left && n->left->parent != n) {
+        return false;
+    }
+    if (n->right && n->right->parent != n) {
+        return false;
+    }
+
+    // Valida a propriedade BST (menores à esquerda e maiores à direita)
+    if (!valid_bst(n, NULL, NULL)) return false;
+
+    // Continua a validação descendo recursivamente para todos os nós descendentes
+    return valid_avl(n->left) && valid_avl(n->right);
+}
+
+/**
+ * @brief Valida exaustivamente uma estrutura AVL testando todas as permutações 
+ *        possíveis de inserções e remoções para um determinado conjunto de entrada.
+ * 
+ * @param[in] data_base Arranjo contendo o conjunto de chaves para os testes (deve estar ordenado!).
+ * @param[in] N Tamanho do arranjo `data_base`.
+ * @param[out] tested_count Ponteiro para armazenar o total de permutações testadas com sucesso.
+ * 
+ * @return Código de retorno do resultado da validação.
+ * 
+ * @retval - `0`: Se a árvore permanecer válida em 100% dos cenários de teste;
+ * @retval - `1`: Falha na alocação de memória para os arranjos auxiliares na heap;
+ * @retval - `2`: Falha na alocação de memória para a raiz da árvore (`bst_alloc`);
+ * @retval - `3`: Inconsistência de dados - `bst_check` falhou após uma INSERÇÃO;
+ * @retval - `4`: Estrutura inválida - `valid_avl` falhou após uma INSERÇÃO;
+ * @retval - `5`: Inconsistência de dados - `bst_check` falhou após uma REMOÇÃO;
+ * @retval - `6`: Estrutura inválida - `valid_avl` falhou após uma REMOÇÃO.
+ */
+int brute_force_avl_validation(const int *data_base, const int N, unsigned long long *tested_count) {
+    int status = 0; // Inicializado com "Sucesso"
+
+    int *data_insert = (int *) malloc(sizeof(int) * N);
+    int *data_remove = (int *) malloc(sizeof(int) * N);
+    int *arr = (int *) malloc(sizeof(int) * N);
+
+    if (!data_insert || !data_remove || !arr) {
+        status = 1;
+        goto cleanup;
+    }
+
+    memcpy(data_insert, data_base, sizeof(int) * N);
+    *tested_count = 0; // O número de permutações validadas com sucesso
+
     do { // Loop de Inserção
-    
-        data_remove = (int *)malloc(sizeof(int) * N);
-        memcpy(data_remove, DATA_REMOVE, sizeof(int) * N);
+        memcpy(data_remove, data_base, sizeof(int) * N);
 
         do { // Loop de Remoção
             BST *T = bst_alloc();
+            if (!T) {
+                status = 2; // Falhou ao alocar a árvore
+                goto cleanup;
+            }
 
-            printf("--------------------------------------------\n");
-            printf("Dados para Insercao:\n\t");
-            data_print(data_insert, N);
-            
+            // Teste de Inserções
             for (int i = 0; i < N; i++) {
-                printf("Inserindo: %02d\n", data_insert[i]);
                 Node *nd = node_alloc(data_insert[i]);
-                bst_insert(T, nd);
-                bst_print(T);
-                assert(bst_check(T->root, data_insert, i + 1));
+                avl_insert(T, nd);
+
+                if (!bst_check(T->root, data_insert, i + 1)) {
+                    bst_free(T);
+                    status = 3; // Dados inconsistentes
+                    goto cleanup;
+                }
+                
+                if (!valid_avl(T->root)) {
+                    bst_free(T);
+                    status = 4; // Estrutura AVL inválida
+                    goto cleanup;
+                }
             }
             
-            printf("Arvore apos todas as INSERCOES:\n");
-            bst_printTree(T);
-
-            printf("Dados para Remocao:\n\t");
-            data_print(data_remove, N);
-            int *arr = (int *)malloc(sizeof(int) * N);
             int asize = N;
             memcpy(arr, data_insert, sizeof(int) * asize);
             
+            // Teste de Remoções
             for (int i = 0; i < N; i++) {
-                printf("Removendo: %02d\n", data_remove[i]);
-                bst_delete(T, bst_search(T->root, data_remove[i]));
-                bst_print(T);
+                avl_delete(T, bst_search(T->root, data_remove[i]));
                 asize = arr_remove(arr, asize, data_remove[i]);
-                assert(bst_check(T->root, arr, asize));
+                
+                if (!bst_check(T->root, arr, asize)) {
+                    bst_free(T);
+                    status = 5; // Dados inconsistentes
+                    goto cleanup;
+                }
+                
+                if (!valid_avl(T->root)) {
+                    bst_free(T);
+                    status = 6; // Estrutura AVL inválida
+                    goto cleanup;
+                }
             }
-            
-            printf("Arvore apos todas as REMOCOES:\n");
-            bst_printTree(T);
 
-            free(arr);
             bst_free(T);
+            (*tested_count)++;
 
         } while (perm_next(data_remove, N));
-        
-        free(data_remove);
-
     } while (perm_next(data_insert, N));
-    
-    free(data_insert);
 
-    return EXIT_SUCCESS;
+cleanup:
+    // Esse bloco será executado tanto em sucesso quanto em falha
+    if (data_remove) free(data_remove);
+    if (data_insert) free(data_insert);
+    if (arr) free(arr);
+    
+    return status;
+}
+
+int main() {
+    int DATA_BASE[] = {1, 2, 3, 4, 5};
+    const int N = sizeof(DATA_BASE) / sizeof(int); // Tamanho do arranjo `DATA_BASE`
+
+    // Garante que o arranjo base está na menor permutação lexicográfica possível (ordenado em ordem crescente)
+    qsort(DATA_BASE, N, sizeof(int), int_comp); 
+
+    unsigned long long permutacoesTestadas = 0ULL;
+
+    printf("\nIniciando bateria de testes AVL...\n");
+
+    int status = brute_force_avl_validation(DATA_BASE, N, &permutacoesTestadas);
+
+    if (status == 0) {
+        printf("\n%llu permutações distintas de inserções e remoções foram validadas com sucesso!\n", permutacoesTestadas);
+        return EXIT_SUCCESS;
+    } else {
+        printf("\nErro: Testes abortados prematuramente.\n");
+        printf("(Número de permutações bem sucedidas antes da falha: %llu)\n", permutacoesTestadas);
+        printf("Detalhamento do erro: ");
+
+        switch (status) {
+            case 1:
+                printf("Código [1]: Falha de alocação de memória (arranjos auxiliares).\n");
+                break;
+            case 2:
+                printf("Código [2]: Falha de alocação de memória (\"bst_alloc\").\n");
+                break;
+            case 3:
+                printf("Código [3]: Inconsistência nos dados (\"bst_check\" falhou) após uma inserção.\n");
+                break;
+            case 4:
+                printf("Código [4]: Estrutura inválida (\"valid_avl\" falhou) após uma inserção.\n");
+                break;
+            case 5:
+                printf("Código [5]: Inconsistência nos dados (\"bst_check\" falhou) após uma remoção.\n");
+                break;
+            case 6:
+                printf("Código [6]: Estrutura inválida (\"valid_avl\" falhou) após uma remoção.\n");
+                break;
+            default:
+                printf("Código [?]: Erro desconhecido.\n");
+                break;
+        }
+
+        printf("\n");
+        return EXIT_FAILURE;
+    }
 }
