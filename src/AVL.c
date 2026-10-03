@@ -768,65 +768,73 @@ int arr_remove(int *arr, int N, int value) {
 }
 
 int main() {
-    int DATA_INSERT[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
-    int DATA_REMOVE[] = {1, 2, 3, 4, 5}; // DEVE estar ordenado!
-    const int N = 5; // tamanho dos arranjos de inserção e remoção
+    int DATA_BASE[] = {1, 2, 3, 4, 5};
+    const int N = sizeof(DATA_BASE) / sizeof(int); // Tamanho do arranjo `DATA_BASE`
+
+    qsort(DATA_BASE, N, sizeof(int), int_comp); // Ordena o arranjo `DATA_BASE`
 
     int *data_insert, *data_remove;
 
     data_insert = (int *) malloc(sizeof(int) * N);
-    memcpy(data_insert, DATA_INSERT, sizeof(int) * N);
+    data_remove = (int *) malloc(sizeof(int) * N);
+    int *arr = (int *) malloc(sizeof(int) * N);
+
+    memcpy(data_insert, DATA_BASE, sizeof(int) * N);
+
+    unsigned long long permutacoesTestadas = 0ULL;
     
+    /**
+     * Desativamos as impressões para deixar o assert fazer a verificação automaticamente
+     */
+
     do { // Loop de Inserção
-    
-        data_remove = (int *) malloc(sizeof(int) * N);
-        memcpy(data_remove, DATA_REMOVE, sizeof(int) * N);
+        memcpy(data_remove, DATA_BASE, sizeof(int) * N);
 
         do { // Loop de Remoção
             BST *T = bst_alloc();
 
-            printf("--------------------------------------------\n");
-            printf("Dados para Insercao:\n\t");
-            data_print(data_insert, N);
+            // printf("--------------------------------------------\n");
+            // printf("Dados para Insercao:\n\t");
+            // data_print(data_insert, N);
             
             for (int i = 0; i < N; i++) {
-                printf("Inserindo: %02d\n", data_insert[i]);
+                // printf("Inserindo: %02d\n", data_insert[i]);
                 Node *nd = node_alloc(data_insert[i]);
                 avl_insert(T, nd);
-                bst_print(T);
+                // bst_print(T);
                 assert(bst_check(T->root, data_insert, i + 1));
             }
             
-            printf("Arvore apos todas as INSERCOES:\n");
-            bst_printTree(T);
+            // printf("Arvore apos todas as INSERCOES:\n");
+            // bst_printTree(T);
 
-            printf("Dados para Remocao:\n\t");
-            data_print(data_remove, N);
-            int *arr = (int *) malloc(sizeof(int) * N);
+            // printf("Dados para Remocao:\n\t");
+            // data_print(data_remove, N);
             int asize = N;
             memcpy(arr, data_insert, sizeof(int) * asize);
             
             for (int i = 0; i < N; i++) {
-                printf("Removendo: %02d\n", data_remove[i]);
+                // printf("Removendo: %02d\n", data_remove[i]);
                 avl_delete(T, bst_search(T->root, data_remove[i]));
-                bst_print(T);
+                // bst_print(T);
                 asize = arr_remove(arr, asize, data_remove[i]);
                 assert(bst_check(T->root, arr, asize));
             }
             
-            printf("Arvore apos todas as REMOCOES:\n");
-            bst_printTree(T);
+            // printf("Arvore apos todas as REMOCOES:\n");
+            // bst_printTree(T);
 
-            free(arr);
             bst_free(T);
 
+            permutacoesTestadas++;
         } while (perm_next(data_remove, N));
-        
-        free(data_remove);
-
     } while (perm_next(data_insert, N));
     
+    free(data_remove);
     free(data_insert);
+    free(arr);
+
+    printf("\n%llu permutações distintas entre inserções / remoções foram validadas com sucesso!\n", permutacoesTestadas);
 
     return EXIT_SUCCESS;
 }
