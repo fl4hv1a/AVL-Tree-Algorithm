@@ -16,7 +16,7 @@ typedef struct Node {
 } Node;
 
 typedef struct BinarySearchTree {
-    struct Node *root;
+    Node *root;
 } BST;
 
 /**
