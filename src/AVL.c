@@ -4,6 +4,7 @@
 #include <string.h>
 #include <assert.h>
 
+#define ALLOWED_IMBALANCE 1
 #define TAB_SIZE 4 // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
 
 typedef struct Node {
@@ -118,8 +119,8 @@ void right_rotate(BST *T, Node *n) {
     leftN->right = n;
 
     // Atualiza as alturas
-    update_height(n); // k2->height = max(...) + 1;
-    update_height(leftN); // k1->height = max(...) + 1;
+    update_height(n);
+    update_height(leftN);
 }
 
 void left_rotate(BST *T, Node *n) {
@@ -132,8 +133,36 @@ void left_rotate(BST *T, Node *n) {
     rightN->left = n;
 
     // Atualiza as alturas
-    update_height(n); // k2->height = max(...) + 1;
-    update_height(rightN); // k1->height = max(...) + 1;
+    update_height(n);
+    update_height(rightN);
+}
+
+void avl_node_rebalance(BST *T, Node *n) {
+    int balance = get_balance(n);
+    if (balance > ALLOWED_IMBALANCE) {
+        if (get_balance(n->left) < 0) { 
+            left_rotate(T, n->left); // Metade da rotação dupla à direita
+        }
+
+        right_rotate(T, n); // Rotação simples à direita
+    } else if (balance < -ALLOWED_IMBALANCE) {
+        if (get_balance(n->right) > 0) {
+            right_rotate(T, n->right); // Metade da rotação dupla à esquerda
+        }
+
+        left_rotate(T, n); // Rotação simples à esquerda
+    }
+}
+
+void avl_balance(BST *T, Node *n) {
+    // Substitui o "desempilhamento" recursivo de Weiss por um loop subindo pelos pais
+    while (n != NULL) {
+        update_height(n); // Atualiza a altura do nó atual
+        
+        avl_node_rebalance(T, n); // Rebalanceia o nó atual
+        
+        n = n->parent; // Sobe para o próximo nó ancestral
+    }
 }
 
 /**
