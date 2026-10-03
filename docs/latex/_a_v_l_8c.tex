@@ -1,0 +1,1631 @@
+\doxysection{src/\+\+AVL.c File Reference}
+\hypertarget{_a_v_l_8c}{}\label{_a_v_l_8c}\index{src/AVL.c@{src/AVL.c}}
+{\ttfamily \+\#include $<$stdio.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \+\#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \+\#include $<$string.\+h$>$}\newline
+{\ttfamily \+\#include $<$assert.\+h$>$}\newline
+Include dependency graph for AVL.\+c:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_node}{Node}}
+\item 
+struct \doxymbox{\hyperlink{struct_binary_search_tree}{Binary\+Search\+Tree}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\+\#define \doxymbox{\hyperlink{_a_v_l_8c_a6e49b8052cef9c6bd47249a9680678c6}{ALLOWED\+\_\+\+IMBALANCE}}~1
+\item 
+\+\#define \doxymbox{\hyperlink{_a_v_l_8c_a9ad1b4a1e4f7381611cfd2ae6620a727}{TAB\+\_\+\+SIZE}}~4
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct Node \doxymbox{\hyperlink{_a_v_l_8c_a3b09f37e675bcd48a01bf22155996872}{Node}}
+\item 
+typedef struct \doxymbox{\hyperlink{struct_binary_search_tree}{Binary\+Search\+Tree}} \doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a9941ed217da0309cd9453bdb776d5c51}{max}} (const int a, const int b)
+\begin{DoxyCompactList}\small\item\em Encontra o maior entre dois inteiros. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a4af6752a1b7e972b6b108010956f41b2}{height}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Retorna a altura de um nó (distância até o nó folha mais profundo entre as subárvores filhas). \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a10edc6b8901a470098c74562215a08a4}{update\+\_\+height}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Recalcula e atualiza a altura de um nó. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_aa4cce2c80e165d88bf20afdddcc0cf80}{get\+\_\+balance}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Calcula o fator de balanceamento (FB) de um nó. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a39118534e6629bdcfc2f307634f587e9}{transplant}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}u, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}v)
+\begin{DoxyCompactList}\small\item\em Substitui uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} de raíz {\ttfamily u} por uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} de raíz {\ttfamily v}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a370b0833acbb10a544bc0c563ee49030}{right\+\_\+rotate}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Realiza uma rotação à direita em um nó de uma árvore AVL. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_aaec7538308c0eb02c463e213d6f3aa3a}{left\+\_\+rotate}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Realiza uma rotação à esquerda em um nó de uma árvore AVL. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_ab627553d9a86dcba67d6a53cc1352b07}{avl\+\_\+node\+\_\+rebalance}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Rebalanceia, por meio de rotações, um nó de uma árvore AVL. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a465b6e37ab11ff6d30c0426eaf75a4f8}{avl\+\_\+balance}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Rebalanceia uma árvore AVL após uma modificação estrutural. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}{node\+\_\+alloc}} (int key)
+\begin{DoxyCompactList}\small\item\em Aloca um nó na memória heap e preenche com a chave fornecida. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a884495fab1fa562c4eccf7115a64b046}{node\+\_\+free}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Desaloca um nó previamente alocado com \doxylink{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}{node\+\_\+alloc()}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_a6b4a779e1b645f6d7d77d8f8da3c2e1c}{bst\+\_\+minimum}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x)
+\begin{DoxyCompactList}\small\item\em Busca e retorna o menor nó encontrado em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_ac01ef54ec68c402b199186c8bdd35091}{bst\+\_\+maximum}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x)
+\begin{DoxyCompactList}\small\item\em Busca e retorna o maior nó encontrado em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0}{bst\+\_\+alloc}} ()
+\begin{DoxyCompactList}\small\item\em Aloca uma \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} vazia na memória heap. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a9d8b4ba0b7995193a345b47668cd3cd1}{bst\+\_\+free\+Rec}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Desaloca recursivamente (das folhas até a raíz) uma subárvore composta por nós previamente alocados com \doxylink{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}{node\+\_\+alloc()}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_ac6189d5c9c8ecf0389224f72c9cb5d26}{bst\+\_\+free}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T)
+\begin{DoxyCompactList}\small\item\em Desaloca uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} (e todos os seus nós) previamente alocada com \doxylink{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0}{bst\+\_\+alloc()}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a8e7c68035b2e5d7b5527e746af60e79f}{bst\+\_\+insert}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}z)
+\begin{DoxyCompactList}\small\item\em Insere um novo nó em uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a1b3043571e09f081c6f466929b23fa03}{avl\+\_\+insert}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}z)
+\begin{DoxyCompactList}\small\item\em Insere um novo nó em uma árvore AVL e refaz o balanceamento. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_a4c2ec54ec2152915ee426bc0ca0148d2}{bst\+\_\+successor}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x)
+\begin{DoxyCompactList}\small\item\em Busca e retorna o nó com a menor chave maior que a chave de x (o sucessor em-\/ordem de x). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_ada743fa0d29a4fd5d7b4dbefb2eaec15}{bst\+\_\+predecessor}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x)
+\begin{DoxyCompactList}\small\item\em Busca e retorna o nó com a maior chave menor que a chave de x (o predecessor em-\/ordem de x). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_a2505c089ebdca956bb5e23681416ee0b}{bst\+\_\+search}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x, int key)
+\begin{DoxyCompactList}\small\item\em Busca por um nó em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} que contenha uma chave específica. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{_a_v_l_8c_adaffb600b872647c8961cf7d7472e2d7}{bst\+\_\+delete}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}z)
+\begin{DoxyCompactList}\small\item\em Remove e desaloca um nó de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a3390973dde693973414dcb375b1a4b06}{avl\+\_\+delete}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}z)
+\begin{DoxyCompactList}\small\item\em Remove, rebalanceia e desaloca um nó de uma árvore AVL. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a77ca0e5b581e501f2bcec41922f4bcd4}{bst\+\_\+size}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}x)
+\begin{DoxyCompactList}\small\item\em Calcula recursivamente o tamanho (quantidade de nós) de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_acb442047fc2d876819861b9fc796c833}{bst\+\_\+print\+Rec}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Imprime recursivamente uma representação textual de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a929c5a1ce7333f57e7d681a524da0f66}{bst\+\_\+print}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T)
+\begin{DoxyCompactList}\small\item\em Imprime recursivamente uma representação textual de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a92324061fc65f116680303e181578617}{bst\+\_\+store}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}nd, int \texorpdfstring{$\ast$}{*}arr, int \texorpdfstring{$\ast$}{*}index)
+\begin{DoxyCompactList}\small\item\em Percorre uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} em-\/ordem e armazena suas chaves em um vetor. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a32de69f705aafad902e07b8e434197e6}{int\+\_\+comp}} (const void \texorpdfstring{$\ast$}{*}a, const void \texorpdfstring{$\ast$}{*}b)
+\begin{DoxyCompactList}\small\item\em Função de comparação para ordenação crescente de inteiros. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0}{bst\+\_\+check}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}nd, const int \texorpdfstring{$\ast$}{*}const data, const int N)
+\begin{DoxyCompactList}\small\item\em Verifica se uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} possui exatamente as mesmas chaves (considerando-\/se um percurso em-\/ordem) de um vetor de referência. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a0cd78a21e92d3c256c670808260b2515}{bst\+\_\+print\+Tree\+Rec}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}root, int space)
+\begin{DoxyCompactList}\small\item\em Imprime uma representação textual da estrutura geometrica completa de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} deitada no terminal. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_af5e1440b6cd0bdfb25ce222c279d8aad}{bst\+\_\+print\+Tree}} (\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}T)
+\begin{DoxyCompactList}\small\item\em Imprime uma representação textual da estrutura geometrica completa de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} deitada no terminal. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8}{swap}} (int \texorpdfstring{$\ast$}{*}a, int \texorpdfstring{$\ast$}{*}b)
+\begin{DoxyCompactList}\small\item\em Troca o valor de duas variáveis inteiras. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442}{perm\+\_\+invert}} (int \texorpdfstring{$\ast$}{*}arr, int inicio, int fim)
+\begin{DoxyCompactList}\small\item\em Inverte a ordem dos elementos de um sub-\/arranjo (uma parte) específico dentro de um vetor. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{_a_v_l_8c_a2d44d3e99471f267697ed39a529dbebe}{perm\+\_\+next}} (int \texorpdfstring{$\ast$}{*}arr, int tamanho)
+\begin{DoxyCompactList}\small\item\em Gera a próxima permutação lexicográfica de um arranjo. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_a_v_l_8c_acbd2d63b3ea94fd141774c3959cad775}{data\+\_\+print}} (const int \texorpdfstring{$\ast$}{*}const data, const int N)
+\begin{DoxyCompactList}\small\item\em Imprime uma representação textual de um arranjo de inteiros ("{}data"{}). \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a72495152e3d2ed2a5cb77a35f1ef0be9}{arr\+\_\+remove}} (int \texorpdfstring{$\ast$}{*}arr, int N, int value)
+\begin{DoxyCompactList}\small\item\em Remove todas as ocorrências de um valor específico em um arranjo. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a060fa0b4fcf6b0b8ea55dda7e1bad8fe}{compute\+\_\+real\+\_\+height}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Computa a altura real de uma subárvore percorrendo completamente todas as suas subárvores filhas. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{_a_v_l_8c_a6985c7e44191e949a22664a276832fba}{valid\+\_\+bst}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}min\+\_\+node, \doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}max\+\_\+node)
+\begin{DoxyCompactList}\small\item\em Verifica recursivamente se todos os nós de uma subárvore respeitam as propriedades \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{_a_v_l_8c_a4de17fb990668c41f2d275953f055874}{valid\+\_\+avl}} (\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Valida estruturalmente se uma subárvore obedece a todas as propriedades de uma árvore AVL. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_a79d94341619b92b80bb6e9a2431aee24}{brute\+\_\+force\+\_\+avl\+\_\+validation}} (const int \texorpdfstring{$\ast$}{*}data\+\_\+base, const int N, unsigned long long \texorpdfstring{$\ast$}{*}tested\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Valida exaustivamente uma estrutura AVL testando todas as permutações possíveis de inserções e remoções para um determinado conjunto de entrada. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{_a_v_l_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\label{_a_v_l_8c_doc-define-members}
+\Hypertarget{_a_v_l_8c_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_a_v_l_8c_a6e49b8052cef9c6bd47249a9680678c6}\index{AVL.c@{AVL.c}!ALLOWED\_IMBALANCE@{ALLOWED\_IMBALANCE}}
+\index{ALLOWED\_IMBALANCE@{ALLOWED\_IMBALANCE}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{ALLOWED\_IMBALANCE}{ALLOWED\_IMBALANCE}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a6e49b8052cef9c6bd47249a9680678c6} 
+\+\#define ALLOWED\+\_\+\+IMBALANCE~1}
+
+\Hypertarget{_a_v_l_8c_a9ad1b4a1e4f7381611cfd2ae6620a727}\index{AVL.c@{AVL.c}!TAB\_SIZE@{TAB\_SIZE}}
+\index{TAB\_SIZE@{TAB\_SIZE}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{TAB\_SIZE}{TAB\_SIZE}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a9ad1b4a1e4f7381611cfd2ae6620a727} 
+\+\#define TAB\+\_\+\+SIZE~4}
+
+
+
+\label{_a_v_l_8c_doc-typedef-members}
+\Hypertarget{_a_v_l_8c_doc-typedef-members}
+\doxysubsection{Typedef Documentation}
+\Hypertarget{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}\index{AVL.c@{AVL.c}!BST@{BST}}
+\index{BST@{BST}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{BST}{BST}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e} 
+typedef struct \doxymbox{\hyperlink{struct_binary_search_tree}{Binary\+Search\+Tree}} \doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}}}
+
+\Hypertarget{_a_v_l_8c_a3b09f37e675bcd48a01bf22155996872}\index{AVL.c@{AVL.c}!Node@{Node}}
+\index{Node@{Node}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{Node}{Node}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a3b09f37e675bcd48a01bf22155996872} 
+typedef struct Node Node}
+
+
+
+\label{_a_v_l_8c_doc-func-members}
+\Hypertarget{_a_v_l_8c_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_a_v_l_8c_a72495152e3d2ed2a5cb77a35f1ef0be9}\index{AVL.c@{AVL.c}!arr\_remove@{arr\_remove}}
+\index{arr\_remove@{arr\_remove}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{arr\_remove()}{arr\_remove()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a72495152e3d2ed2a5cb77a35f1ef0be9} 
+int arr\+\_\+remove (\begin{DoxyParamCaption}\item[{int \texorpdfstring{$\ast$}{*}}]{arr}{, }\item[{int}]{N}{, }\item[{int}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Remove todas as ocorrências de um valor específico em um arranjo. 
+
+A remoção é feita sobrescrevendo o elemento alvo e deslocando todos os elementos subsequentes uma posição para a esquerda. O índice do loop é decrementado (i--) após uma remoção para que valores adjacentes idênticos não sejam ignorados após um deslocamento.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in,out}}  & {\em arr} & Ponteiro para o arranjo onde a remoção ocorrerá. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em N} & Tamanho atual do arranjo. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em value} & O valor numérico que será procurado e removido do arranjo.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+O novo tamanho do arranjo ({\ttfamily N} -\/ a quantidade de elementos removidos). 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=145pt]{_a_v_l_8c_a72495152e3d2ed2a5cb77a35f1ef0be9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a72495152e3d2ed2a5cb77a35f1ef0be9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a465b6e37ab11ff6d30c0426eaf75a4f8}\index{AVL.c@{AVL.c}!avl\_balance@{avl\_balance}}
+\index{avl\_balance@{avl\_balance}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{avl\_balance()}{avl\_balance()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a465b6e37ab11ff6d30c0426eaf75a4f8} 
+void avl\+\_\+balance (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Rebalanceia uma árvore AVL após uma modificação estrutural. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde acontecerá o rebalanceamento. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó mais profundo onde o balanceamento pode ter sido alterado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a465b6e37ab11ff6d30c0426eaf75a4f8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a465b6e37ab11ff6d30c0426eaf75a4f8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a3390973dde693973414dcb375b1a4b06}\index{AVL.c@{AVL.c}!avl\_delete@{avl\_delete}}
+\index{avl\_delete@{avl\_delete}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{avl\_delete()}{avl\_delete()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a3390973dde693973414dcb375b1a4b06} 
+void avl\+\_\+delete (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{z}{}\end{DoxyParamCaption})}
+
+
+
+Remove, rebalanceia e desaloca um nó de uma árvore AVL. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde o nó será removido. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em z} & Ponteiro para o nó que será removido. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a3390973dde693973414dcb375b1a4b06_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a3390973dde693973414dcb375b1a4b06_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a1b3043571e09f081c6f466929b23fa03}\index{AVL.c@{AVL.c}!avl\_insert@{avl\_insert}}
+\index{avl\_insert@{avl\_insert}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{avl\_insert()}{avl\_insert()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a1b3043571e09f081c6f466929b23fa03} 
+void avl\+\_\+insert (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{z}{}\end{DoxyParamCaption})}
+
+
+
+Insere um novo nó em uma árvore AVL e refaz o balanceamento. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde o nó deve ser inserido. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em z} & Ponteiro para o nó a ser inserido. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a1b3043571e09f081c6f466929b23fa03_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a1b3043571e09f081c6f466929b23fa03_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_ab627553d9a86dcba67d6a53cc1352b07}\index{AVL.c@{AVL.c}!avl\_node\_rebalance@{avl\_node\_rebalance}}
+\index{avl\_node\_rebalance@{avl\_node\_rebalance}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{avl\_node\_rebalance()}{avl\_node\_rebalance()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_ab627553d9a86dcba67d6a53cc1352b07} 
+void avl\+\_\+node\+\_\+rebalance (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Rebalanceia, por meio de rotações, um nó de uma árvore AVL. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde será realizado o rebalanceamento. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó que será rebalanceado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_ab627553d9a86dcba67d6a53cc1352b07_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_ab627553d9a86dcba67d6a53cc1352b07_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a79d94341619b92b80bb6e9a2431aee24}\index{AVL.c@{AVL.c}!brute\_force\_avl\_validation@{brute\_force\_avl\_validation}}
+\index{brute\_force\_avl\_validation@{brute\_force\_avl\_validation}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{brute\_force\_avl\_validation()}{brute\_force\_avl\_validation()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a79d94341619b92b80bb6e9a2431aee24} 
+int brute\+\_\+force\+\_\+avl\+\_\+validation (\begin{DoxyParamCaption}\item[{const int \texorpdfstring{$\ast$}{*}}]{data\+\_\+base}{, }\item[{const int}]{N}{, }\item[{unsigned long long \texorpdfstring{$\ast$}{*}}]{tested\+\_\+count}{}\end{DoxyParamCaption})}
+
+
+
+Valida exaustivamente uma estrutura AVL testando todas as permutações possíveis de inserções e remoções para um determinado conjunto de entrada. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em data\+\_\+base} & Arranjo contendo o conjunto de chaves para os testes (deve estar ordenado!). \\
+\hline
+\doxymbox{\texttt{in}}  & {\em N} & Tamanho do arranjo {\ttfamily data\+\_\+base}. \\
+\hline
+\doxymbox{\texttt{out}}  & {\em tested\+\_\+count} & Ponteiro para armazenar o total de permutações testadas com sucesso.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Código de retorno do resultado da validação.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily 0}: Se a árvore permanecer válida em 100\% dos cenários de teste; \\
+\hline
+{\em -\/} & {\ttfamily 1}: Falha na alocação de memória para os arranjos auxiliares na heap; \\
+\hline
+{\em -\/} & {\ttfamily 2}: Falha na alocação de memória para a raiz da árvore ({\ttfamily \doxylink{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0}{bst\+\_\+alloc}}); \\
+\hline
+{\em -\/} & {\ttfamily 3}: Inconsistência de dados -\/ {\ttfamily \doxylink{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0}{bst\+\_\+check}} falhou após uma INSERÇÃO; \\
+\hline
+{\em -\/} & {\ttfamily 4}: Estrutura inválida -\/ {\ttfamily \doxylink{_a_v_l_8c_a4de17fb990668c41f2d275953f055874}{valid\+\_\+avl}} falhou após uma INSERÇÃO; \\
+\hline
+{\em -\/} & {\ttfamily 5}: Inconsistência de dados -\/ {\ttfamily \doxylink{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0}{bst\+\_\+check}} falhou após uma REMOÇÃO; \\
+\hline
+{\em -\/} & {\ttfamily 6}: Estrutura inválida -\/ {\ttfamily \doxylink{_a_v_l_8c_a4de17fb990668c41f2d275953f055874}{valid\+\_\+avl}} falhou após uma REMOÇÃO. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a79d94341619b92b80bb6e9a2431aee24_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{_a_v_l_8c_a79d94341619b92b80bb6e9a2431aee24_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0}\index{AVL.c@{AVL.c}!bst\_alloc@{bst\_alloc}}
+\index{bst\_alloc@{bst\_alloc}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_alloc()}{bst\_alloc()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0} 
+\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*} bst\+\_\+alloc (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Aloca uma \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} vazia na memória heap. 
+
+\begin{DoxyReturn}{Returns}
+Ponteiro para a \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} alocada, ou NULL em caso de falha na alocação. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=135pt]{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0}\index{AVL.c@{AVL.c}!bst\_check@{bst\_check}}
+\index{bst\_check@{bst\_check}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_check()}{bst\_check()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0} 
+bool bst\+\_\+check (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{nd}{, }\item[{const int \texorpdfstring{$\ast$}{*}const}]{data}{, }\item[{const int}]{N}{}\end{DoxyParamCaption})}
+
+
+
+Verifica se uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} possui exatamente as mesmas chaves (considerando-\/se um percurso em-\/ordem) de um vetor de referência. 
+
+A validação se inicia comparando o tamanho da árvore com o do vetor. Após isso, o vetor de referência é copiado e ordenado. Por fim, extrai as chaves da árvore (também em-\/ordem) e realiza uma comparação elemento a elemento.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em nd} & Ponteiro para o nó raiz da subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} a ser verificada. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em data} & Ponteiro constante para um vetor contendo as chaves de referência. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em N} & Quantidade de elementos contidos no vetor de referência.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resultado da validação da subárvore.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily true}: se a subárvore contiver exatamente as mesmas chaves em-\/ordem do vetor; \\
+\hline
+{\em -\/} & {\ttfamily false}: caso o tamanho da subárvore seja diferente ou alguma chave não corresponda ao seu respectivo valor de referência. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=234pt]{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a6c74c80247dd8f2f22c3160d530a87d0_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_adaffb600b872647c8961cf7d7472e2d7}\index{AVL.c@{AVL.c}!bst\_delete@{bst\_delete}}
+\index{bst\_delete@{bst\_delete}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_delete()}{bst\_delete()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_adaffb600b872647c8961cf7d7472e2d7} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+delete (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{z}{}\end{DoxyParamCaption})}
+
+
+
+Remove e desaloca um nó de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} onde o nó será removido. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em z} & Ponteiro para o nó que será removido.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o nó mais profundo da árvore onde o balanceamento pode ter sido quebrado (caso {\ttfamily T} seja uma AVL). 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_adaffb600b872647c8961cf7d7472e2d7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_adaffb600b872647c8961cf7d7472e2d7_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_ac6189d5c9c8ecf0389224f72c9cb5d26}\index{AVL.c@{AVL.c}!bst\_free@{bst\_free}}
+\index{bst\_free@{bst\_free}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_free()}{bst\_free()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_ac6189d5c9c8ecf0389224f72c9cb5d26} 
+void bst\+\_\+free (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{}\end{DoxyParamCaption})}
+
+
+
+Desaloca uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} (e todos os seus nós) previamente alocada com \doxylink{_a_v_l_8c_aa4e379ca03d0d3edc3445278a72dead0}{bst\+\_\+alloc()}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} a ser desalocada. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=331pt]{_a_v_l_8c_ac6189d5c9c8ecf0389224f72c9cb5d26_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_ac6189d5c9c8ecf0389224f72c9cb5d26_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a9d8b4ba0b7995193a345b47668cd3cd1}\index{AVL.c@{AVL.c}!bst\_freeRec@{bst\_freeRec}}
+\index{bst\_freeRec@{bst\_freeRec}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_freeRec()}{bst\_freeRec()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a9d8b4ba0b7995193a345b47668cd3cd1} 
+void bst\+\_\+free\+Rec (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Desaloca recursivamente (das folhas até a raíz) uma subárvore composta por nós previamente alocados com \doxylink{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}{node\+\_\+alloc()}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó raíz da subárvore a ser desalocada. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{_a_v_l_8c_a9d8b4ba0b7995193a345b47668cd3cd1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a9d8b4ba0b7995193a345b47668cd3cd1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a8e7c68035b2e5d7b5527e746af60e79f}\index{AVL.c@{AVL.c}!bst\_insert@{bst\_insert}}
+\index{bst\_insert@{bst\_insert}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_insert()}{bst\_insert()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a8e7c68035b2e5d7b5527e746af60e79f} 
+void bst\+\_\+insert (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{z}{}\end{DoxyParamCaption})}
+
+
+
+Insere um novo nó em uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} onde o nó deve ser inserido. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em z} & Ponteiro para o nó a ser inserido. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=139pt]{_a_v_l_8c_a8e7c68035b2e5d7b5527e746af60e79f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a8e7c68035b2e5d7b5527e746af60e79f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_ac01ef54ec68c402b199186c8bdd35091}\index{AVL.c@{AVL.c}!bst\_maximum@{bst\_maximum}}
+\index{bst\_maximum@{bst\_maximum}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_maximum()}{bst\_maximum()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_ac01ef54ec68c402b199186c8bdd35091} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+maximum (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{}\end{DoxyParamCaption})}
+
+
+
+Busca e retorna o maior nó encontrado em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro não-\/nulo para a raíz da subárvore alvo.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o maior nó encontrado na subárvore alvo. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=158pt]{_a_v_l_8c_ac01ef54ec68c402b199186c8bdd35091_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=282pt]{_a_v_l_8c_ac01ef54ec68c402b199186c8bdd35091_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a6b4a779e1b645f6d7d77d8f8da3c2e1c}\index{AVL.c@{AVL.c}!bst\_minimum@{bst\_minimum}}
+\index{bst\_minimum@{bst\_minimum}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_minimum()}{bst\_minimum()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a6b4a779e1b645f6d7d77d8f8da3c2e1c} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+minimum (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{}\end{DoxyParamCaption})}
+
+
+
+Busca e retorna o menor nó encontrado em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro não-\/nulo para a raíz da subárvore alvo.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o menor nó encontrado na subárvore alvo. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=155pt]{_a_v_l_8c_a6b4a779e1b645f6d7d77d8f8da3c2e1c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a6b4a779e1b645f6d7d77d8f8da3c2e1c_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_ada743fa0d29a4fd5d7b4dbefb2eaec15}\index{AVL.c@{AVL.c}!bst\_predecessor@{bst\_predecessor}}
+\index{bst\_predecessor@{bst\_predecessor}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_predecessor()}{bst\_predecessor()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_ada743fa0d29a4fd5d7b4dbefb2eaec15} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+predecessor (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{}\end{DoxyParamCaption})}
+
+
+
+Busca e retorna o nó com a maior chave menor que a chave de x (o predecessor em-\/ordem de x). 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro para o nó sucessor em-\/ordem do nó que será buscado.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o nó predecessor em-\/ordem de x, ou NULL caso nenhum predecessor seja encontrado. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=282pt]{_a_v_l_8c_ada743fa0d29a4fd5d7b4dbefb2eaec15_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=168pt]{_a_v_l_8c_ada743fa0d29a4fd5d7b4dbefb2eaec15_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a929c5a1ce7333f57e7d681a524da0f66}\index{AVL.c@{AVL.c}!bst\_print@{bst\_print}}
+\index{bst\_print@{bst\_print}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_print()}{bst\_print()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a929c5a1ce7333f57e7d681a524da0f66} 
+void bst\+\_\+print (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{}\end{DoxyParamCaption})}
+
+
+
+Imprime recursivamente uma representação textual de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} a ser impressa. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{_a_v_l_8c_a929c5a1ce7333f57e7d681a524da0f66_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=134pt]{_a_v_l_8c_a929c5a1ce7333f57e7d681a524da0f66_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_acb442047fc2d876819861b9fc796c833}\index{AVL.c@{AVL.c}!bst\_printRec@{bst\_printRec}}
+\index{bst\_printRec@{bst\_printRec}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_printRec()}{bst\_printRec()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_acb442047fc2d876819861b9fc796c833} 
+void bst\+\_\+print\+Rec (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Imprime recursivamente uma representação textual de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Nó raiz da subárvore a ser impressa. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=152pt]{_a_v_l_8c_acb442047fc2d876819861b9fc796c833_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{_a_v_l_8c_acb442047fc2d876819861b9fc796c833_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_af5e1440b6cd0bdfb25ce222c279d8aad}\index{AVL.c@{AVL.c}!bst\_printTree@{bst\_printTree}}
+\index{bst\_printTree@{bst\_printTree}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_printTree()}{bst\_printTree()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_af5e1440b6cd0bdfb25ce222c279d8aad} 
+void bst\+\_\+print\+Tree (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{}\end{DoxyParamCaption})}
+
+
+
+Imprime uma representação textual da estrutura geometrica completa de uma árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} deitada no terminal. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} a ser representada. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{_a_v_l_8c_af5e1440b6cd0bdfb25ce222c279d8aad_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=153pt]{_a_v_l_8c_af5e1440b6cd0bdfb25ce222c279d8aad_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a0cd78a21e92d3c256c670808260b2515}\index{AVL.c@{AVL.c}!bst\_printTreeRec@{bst\_printTreeRec}}
+\index{bst\_printTreeRec@{bst\_printTreeRec}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_printTreeRec()}{bst\_printTreeRec()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a0cd78a21e92d3c256c670808260b2515} 
+void bst\+\_\+print\+Tree\+Rec (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{root}{, }\item[{int}]{space}{}\end{DoxyParamCaption})}
+
+
+
+Imprime uma representação textual da estrutura geometrica completa de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} deitada no terminal. 
+
+Utiliza um percurso invertido (Direita -\/\texorpdfstring{$>$}{>} Raiz -\/\texorpdfstring{$>$}{>} Esquerda) e uma identação progressiva para desenhar a árvore "{}deitada"{}. A raiz aparece na margem esquerda do terminal, a subárvore direita cresce para a parte de cima e a esquerda para a parte de baixo.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em root} & Ponteiro para o nó raiz da subárvore a ser impressa. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em space} & Quantidade atual de espaços (identação) para o nível de profundidade atual. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=171pt]{_a_v_l_8c_a0cd78a21e92d3c256c670808260b2515_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{_a_v_l_8c_a0cd78a21e92d3c256c670808260b2515_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a2505c089ebdca956bb5e23681416ee0b}\index{AVL.c@{AVL.c}!bst\_search@{bst\_search}}
+\index{bst\_search@{bst\_search}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_search()}{bst\_search()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a2505c089ebdca956bb5e23681416ee0b} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+search (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{, }\item[{int}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Busca por um nó em uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} que contenha uma chave específica. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro para o nó raíz da subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} onde a busca será realizada. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em key} & Chave do nó que será buscado.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o nó encontrado, ou NULL caso nenhum nó contendo a chave especificada seja encontrado. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=144pt]{_a_v_l_8c_a2505c089ebdca956bb5e23681416ee0b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a2505c089ebdca956bb5e23681416ee0b_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a77ca0e5b581e501f2bcec41922f4bcd4}\index{AVL.c@{AVL.c}!bst\_size@{bst\_size}}
+\index{bst\_size@{bst\_size}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_size()}{bst\_size()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a77ca0e5b581e501f2bcec41922f4bcd4} 
+int bst\+\_\+size (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{}\end{DoxyParamCaption})}
+
+
+
+Calcula recursivamente o tamanho (quantidade de nós) de uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro para a raíz da subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} a ser calculada.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Inteiro positivo representando a quantidade de nós existentes na subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} fornecida. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=133pt]{_a_v_l_8c_a77ca0e5b581e501f2bcec41922f4bcd4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a77ca0e5b581e501f2bcec41922f4bcd4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a92324061fc65f116680303e181578617}\index{AVL.c@{AVL.c}!bst\_store@{bst\_store}}
+\index{bst\_store@{bst\_store}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_store()}{bst\_store()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a92324061fc65f116680303e181578617} 
+void bst\+\_\+store (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{nd}{, }\item[{int \texorpdfstring{$\ast$}{*}}]{arr}{, }\item[{int \texorpdfstring{$\ast$}{*}}]{index}{}\end{DoxyParamCaption})}
+
+
+
+Percorre uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} em-\/ordem e armazena suas chaves em um vetor. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em nd} & Ponteiro para o nó raiz da subárvore a ser percorrida. \\
+\hline
+\doxymbox{\texttt{out}}  & {\em arr} & Ponteiro para um vetor (já alocado) onde as chaves serão armazenadas.\\
+\hline
+\doxymbox{\texttt{in,out}}  & {\em index} & Ponteiro para a variável inteira que controla a posição atual no vetor. Deve apontar para um valor inicial de {\ttfamily 0} na primeira chamada. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=137pt]{_a_v_l_8c_a92324061fc65f116680303e181578617_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a92324061fc65f116680303e181578617_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a4c2ec54ec2152915ee426bc0ca0148d2}\index{AVL.c@{AVL.c}!bst\_successor@{bst\_successor}}
+\index{bst\_successor@{bst\_successor}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{bst\_successor()}{bst\_successor()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a4c2ec54ec2152915ee426bc0ca0148d2} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} bst\+\_\+successor (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{x}{}\end{DoxyParamCaption})}
+
+
+
+Busca e retorna o nó com a menor chave maior que a chave de x (o sucessor em-\/ordem de x). 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em x} & Ponteiro para o nó predecessor em-\/ordem do nó que será buscado.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o nó sucessor em-\/ordem de x, ou NULL caso nenhum sucessor seja encontrado. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=270pt]{_a_v_l_8c_a4c2ec54ec2152915ee426bc0ca0148d2_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a4c2ec54ec2152915ee426bc0ca0148d2_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a060fa0b4fcf6b0b8ea55dda7e1bad8fe}\index{AVL.c@{AVL.c}!compute\_real\_height@{compute\_real\_height}}
+\index{compute\_real\_height@{compute\_real\_height}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{compute\_real\_height()}{compute\_real\_height()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a060fa0b4fcf6b0b8ea55dda7e1bad8fe} 
+int compute\+\_\+real\+\_\+height (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Computa a altura real de uma subárvore percorrendo completamente todas as suas subárvores filhas. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó raiz da subárvore a ser computada.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A altura real calculada.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & Um inteiro {\ttfamily positivo}: Se {\ttfamily n} for uma subárvore não-\/nula; \\
+\hline
+{\em -\/} & {\ttfamily -\/1}: Se {\ttfamily n} for uma subárvore vazia ({\ttfamily NULL}). \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{_a_v_l_8c_a060fa0b4fcf6b0b8ea55dda7e1bad8fe_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a060fa0b4fcf6b0b8ea55dda7e1bad8fe_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_acbd2d63b3ea94fd141774c3959cad775}\index{AVL.c@{AVL.c}!data\_print@{data\_print}}
+\index{data\_print@{data\_print}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{data\_print()}{data\_print()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_acbd2d63b3ea94fd141774c3959cad775} 
+void data\+\_\+print (\begin{DoxyParamCaption}\item[{const int \texorpdfstring{$\ast$}{*}const}]{data}{, }\item[{const int}]{N}{}\end{DoxyParamCaption})}
+
+
+
+Imprime uma representação textual de um arranjo de inteiros ("{}data"{}). 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em data} & Ponteiro para o arranjo a ser impresso. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em N} & Quantidade de elementos contidos no arranjo {\ttfamily data}. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=139pt]{_a_v_l_8c_acbd2d63b3ea94fd141774c3959cad775_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=139pt]{_a_v_l_8c_acbd2d63b3ea94fd141774c3959cad775_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_aa4cce2c80e165d88bf20afdddcc0cf80}\index{AVL.c@{AVL.c}!get\_balance@{get\_balance}}
+\index{get\_balance@{get\_balance}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{get\_balance()}{get\_balance()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_aa4cce2c80e165d88bf20afdddcc0cf80} 
+int get\+\_\+balance (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Calcula o fator de balanceamento (FB) de um nó. 
+
+Retorna a diferença entre as alturas das subárvores filhas, ou {\ttfamily 0} caso o nó seja nulo (para facilitar o cálculo do FB de nós folha).
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó do qual será calculado o balanceamento.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+O fator de balanceamento do nó {\ttfamily n}.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & Um valor {\ttfamily negativo}: Se a altura da subárvore direita for maior que a esquerda; \\
+\hline
+{\em -\/} & {\ttfamily 0}: Se as duas subárvores tiverem a mesma altura; \\
+\hline
+{\em -\/} & Um valor {\ttfamily positivo}: Se a altura da subárvore esquerda for maior que a direita. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=227pt]{_a_v_l_8c_aa4cce2c80e165d88bf20afdddcc0cf80_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_aa4cce2c80e165d88bf20afdddcc0cf80_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a4af6752a1b7e972b6b108010956f41b2}\index{AVL.c@{AVL.c}!height@{height}}
+\index{height@{height}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{height()}{height()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a4af6752a1b7e972b6b108010956f41b2} 
+int height (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Retorna a altura de um nó (distância até o nó folha mais profundo entre as subárvores filhas). 
+
+Retorna diretamente a altura do nó se ele for não-\/nulo e -\/1 caso contrário. Retornar -\/1 em nós nulos torna o cálculo do balanceamento mais simples para nós folha.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó do qual se deseja receber a altura.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Altura do nó {\ttfamily n}. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=122pt]{_a_v_l_8c_a4af6752a1b7e972b6b108010956f41b2_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a4af6752a1b7e972b6b108010956f41b2_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a32de69f705aafad902e07b8e434197e6}\index{AVL.c@{AVL.c}!int\_comp@{int\_comp}}
+\index{int\_comp@{int\_comp}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{int\_comp()}{int\_comp()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a32de69f705aafad902e07b8e434197e6} 
+int int\+\_\+comp (\begin{DoxyParamCaption}\item[{const void \texorpdfstring{$\ast$}{*}}]{a}{, }\item[{const void \texorpdfstring{$\ast$}{*}}]{b}{}\end{DoxyParamCaption})}
+
+
+
+Função de comparação para ordenação crescente de inteiros. 
+
+Converte os ponteiros genéricos (void \texorpdfstring{$\ast$}{*}) para ponteiros de inteiros (int \texorpdfstring{$\ast$}{*}) e subtrai os valores apontados para determinar a ordem relativa entre eles.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em a} & Ponteiro genérico para o primeiro elemento a ser comparado. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em b} & Ponteiro genérico para o segundo elemento a ser comparado.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+O resultado da comparação.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily -\/1}: Se {\ttfamily a} for menor que {\ttfamily b}; \\
+\hline
+{\em -\/} & {\ttfamily 0}: Se {\ttfamily a} for igual a {\ttfamily b}; \\
+\hline
+{\em -\/} & {\ttfamily 1}: Se {\ttfamily a} for maior que {\ttfamily b}.\\
+\hline
+\end{DoxyRetVals}
+Pode ser utilizado como "{}\`{}int\+\_\+comp(a, b)\`{} \`{}op\`{} \`{}0\`{}"{} (onde {\ttfamily op} é o operador de comparação desejado).
+
+Ex: \begin{DoxyVerb}- "`int_comp(a, b)` `<` `0`" - Testa se `a < b`;
+
+- "`int_comp(a, b)` `>=` `0`" - Testa se `a >= b`;
+\end{DoxyVerb}
+ Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=136pt]{_a_v_l_8c_a32de69f705aafad902e07b8e434197e6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a32de69f705aafad902e07b8e434197e6_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_aaec7538308c0eb02c463e213d6f3aa3a}\index{AVL.c@{AVL.c}!left\_rotate@{left\_rotate}}
+\index{left\_rotate@{left\_rotate}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{left\_rotate()}{left\_rotate()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_aaec7538308c0eb02c463e213d6f3aa3a} 
+void left\+\_\+rotate (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Realiza uma rotação à esquerda em um nó de uma árvore AVL. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde será realizada a rotação. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó que será rotacionado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=331pt]{_a_v_l_8c_aaec7538308c0eb02c463e213d6f3aa3a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_aaec7538308c0eb02c463e213d6f3aa3a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{AVL.c@{AVL.c}!main@{main}}
+\index{main@{main}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=117pt]{_a_v_l_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a9941ed217da0309cd9453bdb776d5c51}\index{AVL.c@{AVL.c}!max@{max}}
+\index{max@{max}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{max()}{max()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a9941ed217da0309cd9453bdb776d5c51} 
+int max (\begin{DoxyParamCaption}\item[{const int}]{a}{, }\item[{const int}]{b}{}\end{DoxyParamCaption})}
+
+
+
+Encontra o maior entre dois inteiros. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em a} & O primeiro inteiro a ser comparado. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em b} & O segundo inteiro a ser comparado.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily a}: se {\ttfamily a \texorpdfstring{$>$}{>} b}; \\
+\hline
+{\em -\/} & {\ttfamily b}: se {\ttfamily a \texorpdfstring{$<$}{<}= b}. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=115pt]{_a_v_l_8c_a9941ed217da0309cd9453bdb776d5c51_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a9941ed217da0309cd9453bdb776d5c51_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}\index{AVL.c@{AVL.c}!node\_alloc@{node\_alloc}}
+\index{node\_alloc@{node\_alloc}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{node\_alloc()}{node\_alloc()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a} 
+\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*} node\+\_\+alloc (\begin{DoxyParamCaption}\item[{int}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Aloca um nó na memória heap e preenche com a chave fornecida. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em key} & Chave a ser inserida no nó alocado.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o nó alocado, ou NULL em caso de falha na alocação. 
+\end{DoxyReturn}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=143pt]{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a884495fab1fa562c4eccf7115a64b046}\index{AVL.c@{AVL.c}!node\_free@{node\_free}}
+\index{node\_free@{node\_free}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{node\_free()}{node\_free()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a884495fab1fa562c4eccf7115a64b046} 
+void node\+\_\+free (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Desaloca um nó previamente alocado com \doxylink{_a_v_l_8c_a0e0425d495f710b85018b62711114a0a}{node\+\_\+alloc()}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó a ser desalocado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=139pt]{_a_v_l_8c_a884495fab1fa562c4eccf7115a64b046_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a884495fab1fa562c4eccf7115a64b046_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442}\index{AVL.c@{AVL.c}!perm\_invert@{perm\_invert}}
+\index{perm\_invert@{perm\_invert}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{perm\_invert()}{perm\_invert()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442} 
+void perm\+\_\+invert (\begin{DoxyParamCaption}\item[{int \texorpdfstring{$\ast$}{*}}]{arr}{, }\item[{int}]{inicio}{, }\item[{int}]{fim}{}\end{DoxyParamCaption})}
+
+
+
+Inverte a ordem dos elementos de um sub-\/arranjo (uma parte) específico dentro de um vetor. 
+
+Utiliza dois índices que convergem para o centro do sub-\/arranjo. A cada iteração, os elementos das extremidades opostas são trocados utilizando a função {\ttfamily \doxylink{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8}{swap()}}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in,out}}  & {\em arr} & Ponteiro para o vetor contendo o sub-\/arranjo a ser invertido (a alteração é feita no próprio vetor original). \\
+\hline
+\doxymbox{\texttt{in}}  & {\em inicio} & Índice inicial (inclusivo) do sub-\/arranjo onde a inversão começará. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em fim} & Índice final (inclusivo) do sub-\/arranjo onde a inversão terminará. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a2d44d3e99471f267697ed39a529dbebe}\index{AVL.c@{AVL.c}!perm\_next@{perm\_next}}
+\index{perm\_next@{perm\_next}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{perm\_next()}{perm\_next()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a2d44d3e99471f267697ed39a529dbebe} 
+bool perm\+\_\+next (\begin{DoxyParamCaption}\item[{int \texorpdfstring{$\ast$}{*}}]{arr}{, }\item[{int}]{tamanho}{}\end{DoxyParamCaption})}
+
+
+
+Gera a próxima permutação lexicográfica de um arranjo. 
+
+Implementa o algoritmo de Narayana Pandita. O algoritmo se inicia encontrando o maior índice {\ttfamily i} tal que {\ttfamily arr\+[i] \texorpdfstring{$<$}{<} arr\+[i+1]}; Depois, encontra o maior índice {\ttfamily j} \texorpdfstring{$>$}{>} {\ttfamily i} onde {\ttfamily arr\+[j] \texorpdfstring{$>$}{>} arr\+[i]}; Posteriormente, troca os elementos de {\ttfamily i} e {\ttfamily j} usando {\ttfamily \doxylink{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8}{swap()}}; Por fim, inverte a ordem do sufixo a partir de {\ttfamily i+1} usando {\ttfamily \doxylink{_a_v_l_8c_a3110ededf7f762491d95784cb2f66442}{perm\+\_\+invert()}}. Se o arranjo estiver em ordem decrescente (a última permutação possível), a função retorna false.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in,out}}  & {\em arr} & Ponteiro para o arranjo de inteiros que será permutado. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em tamanho} & Quantidade de elementos contidos no arranjo.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status da geração da nova permutação.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily true}: se uma nova permutação foi gerada com sucesso; \\
+\hline
+{\em -\/} & {\ttfamily false}: se não houver mais permutações possíveis (o arranjo chegou à sua ordem reversa máxima). \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=320pt]{_a_v_l_8c_a2d44d3e99471f267697ed39a529dbebe_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a2d44d3e99471f267697ed39a529dbebe_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a370b0833acbb10a544bc0c563ee49030}\index{AVL.c@{AVL.c}!right\_rotate@{right\_rotate}}
+\index{right\_rotate@{right\_rotate}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{right\_rotate()}{right\_rotate()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a370b0833acbb10a544bc0c563ee49030} 
+void right\+\_\+rotate (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Realiza uma rotação à direita em um nó de uma árvore AVL. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore AVL onde será realizada a rotação. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó que será rotacionado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=336pt]{_a_v_l_8c_a370b0833acbb10a544bc0c563ee49030_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a370b0833acbb10a544bc0c563ee49030_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8}\index{AVL.c@{AVL.c}!swap@{swap}}
+\index{swap@{swap}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8} 
+void swap (\begin{DoxyParamCaption}\item[{int \texorpdfstring{$\ast$}{*}}]{a}{, }\item[{int \texorpdfstring{$\ast$}{*}}]{b}{}\end{DoxyParamCaption})}
+
+
+
+Troca o valor de duas variáveis inteiras. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em a} & Ponteiro para a primeira variável inteira a ser permutada. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em b} & Ponteiro para a segunda variável inteira a ser permutada. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=119pt]{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a4b9708d87be7a409eff20e5e7e8b43c8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a39118534e6629bdcfc2f307634f587e9}\index{AVL.c@{AVL.c}!transplant@{transplant}}
+\index{transplant@{transplant}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{transplant()}{transplant()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a39118534e6629bdcfc2f307634f587e9} 
+void transplant (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}} \texorpdfstring{$\ast$}{*}}]{T}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{u}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{v}{}\end{DoxyParamCaption})}
+
+
+
+Substitui uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} de raíz {\ttfamily u} por uma subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} de raíz {\ttfamily v}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em T} & Ponteiro para a árvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} onde as subárvores estão contidas. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em u} & Ponteiro para o nó raíz da subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST} original. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em v} & Ponteiro para o novo nó raíz da subárvore \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=139pt]{_a_v_l_8c_a39118534e6629bdcfc2f307634f587e9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a39118534e6629bdcfc2f307634f587e9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a10edc6b8901a470098c74562215a08a4}\index{AVL.c@{AVL.c}!update\_height@{update\_height}}
+\index{update\_height@{update\_height}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{update\_height()}{update\_height()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a10edc6b8901a470098c74562215a08a4} 
+void update\+\_\+height (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Recalcula e atualiza a altura de um nó. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó que será atualizado. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{_a_v_l_8c_a10edc6b8901a470098c74562215a08a4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a10edc6b8901a470098c74562215a08a4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a4de17fb990668c41f2d275953f055874}\index{AVL.c@{AVL.c}!valid\_avl@{valid\_avl}}
+\index{valid\_avl@{valid\_avl}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{valid\_avl()}{valid\_avl()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a4de17fb990668c41f2d275953f055874} 
+bool valid\+\_\+avl (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Valida estruturalmente se uma subárvore obedece a todas as propriedades de uma árvore AVL. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó raiz da subárvore a ser validada.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resultado da validação da subárvore.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily true}: Se for uma AVL perfeitamente válida; \\
+\hline
+{\em -\/} & {\ttfamily false}: Caso alguma propriedade seja violada. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a4de17fb990668c41f2d275953f055874_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a4de17fb990668c41f2d275953f055874_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{_a_v_l_8c_a6985c7e44191e949a22664a276832fba}\index{AVL.c@{AVL.c}!valid\_bst@{valid\_bst}}
+\index{valid\_bst@{valid\_bst}!AVL.c@{AVL.c}}
+\doxysubsubsection{\texorpdfstring{valid\_bst()}{valid\_bst()}}
+{\footnotesize\ttfamily \label{_a_v_l_8c_a6985c7e44191e949a22664a276832fba} 
+bool valid\+\_\+bst (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{n}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{min\+\_\+node}{, }\item[{\doxymbox{\hyperlink{struct_node}{Node}} \texorpdfstring{$\ast$}{*}}]{max\+\_\+node}{}\end{DoxyParamCaption})}
+
+
+
+Verifica recursivamente se todos os nós de uma subárvore respeitam as propriedades \doxylink{_a_v_l_8c_a4d1848b7441587ca454b82e203d97f0e}{BST}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\doxymbox{\texttt{in}}  & {\em n} & Ponteiro para o nó raiz da subárvore a ser validada. \\
+\hline
+\doxymbox{\texttt{in}}  & {\em min\+\_\+node} & Ponteiro para o nó que servirá como limite inferior exclusivo (ou {\ttfamily NULL} se não houver limite). \\
+\hline
+\doxymbox{\texttt{in}}  & {\em max\+\_\+node} & Ponteiro para o nó que servirá como limite superior exclusivo (ou {\ttfamily NULL} se não houver limite).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resultado da validação da subárvore.
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em -\/} & {\ttfamily true}: Se todos os nós estiverem dentro dos limites permitidos; \\
+\hline
+{\em -\/} & {\ttfamily false}: Caso algum nó seja encontrado fora dos limites permitidos. \\
+\hline
+\end{DoxyRetVals}
+Here is the call graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=135pt]{_a_v_l_8c_a6985c7e44191e949a22664a276832fba_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_a_v_l_8c_a6985c7e44191e949a22664a276832fba_icgraph}
+\end{center}
+\end{figure}
