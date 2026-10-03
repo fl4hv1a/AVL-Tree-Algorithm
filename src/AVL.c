@@ -5,7 +5,8 @@
 #include <assert.h>
 
 #define ALLOWED_IMBALANCE 1 // O desbalanceamento máximo permitido em uma AVL
-#define TAB_SIZE 4 // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
+#define TAB_SIZE 4          // Quantos espaços devem ser utilizados para representar um "TAB" no terminal
+// #define SHOW_STEPS       // A existência dessa diretiva controla a impressão detalhada dos testes
 
 typedef struct Node {
     int key;
@@ -767,74 +768,238 @@ int arr_remove(int *arr, int N, int value) {
     return N;
 }
 
+/**
+ * @brief Computa a altura real de uma subárvore percorrendo completamente todas as suas subárvores filhas.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser computada.
+ * 
+ * @return A altura real calculada.
+ * 
+ * @retval - Um inteiro `positivo`: Se `n` for uma subárvore não-nula;
+ * @retval - `-1`: Se `n` for uma subárvore vazia (`NULL`).
+ */
+int compute_real_height(Node *n) {
+    if (!n) return -1; // Passo base: subárvore vazia
+    
+    // Passo recursivo: Cálcula as alturas das subárvores filhas
+    int left_h = compute_real_height(n->left);
+    int right_h = compute_real_height(n->right);
+    
+    return 1 + max(left_h, right_h);
+}
+
+/**
+ * @brief Verifica recursivamente se todos os nós de uma subárvore respeitam as propriedades BST.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser validada.
+ * @param[in] min_node Ponteiro para o nó que servirá como limite inferior exclusivo (ou `NULL` se não houver limite).
+ * @param[in] max_node Ponteiro para o nó que servirá como limite superior exclusivo (ou `NULL` se não houver limite).
+ * 
+ * @return Resultado da validação da subárvore.
+ * 
+ * @retval - `true`: Se todos os nós estiverem dentro dos limites permitidos;
+ * @retval - `false`: Caso algum nó seja encontrado fora dos limites permitidos.
+ */
+bool valid_bst(Node *n, Node *min_node, Node *max_node) {
+    if (!n) return true; // Uma subárvore vazia (`NULL`) já é uma BST válida
+
+    // A chave do nó atual deve ser maior que a do limite inferior
+    if (min_node && n->key <= min_node->key) return false;
+    
+    // A chave do nó atual deve ser menor que a do limite superior
+    if (max_node && n->key >= max_node->key) return false;
+
+    // Ao descer pela esquerda: o teto passa a ser o nó atual, o mínimo continua o mesmo
+    // Ao descer pela direita: o piso passa a ser o nó atual, o máximo continua o mesmo
+    return valid_bst(n->left, min_node, n) && valid_bst(n->right, n, max_node);
+}
+
+/**
+ * @brief Valida estruturalmente se uma subárvore obedece a todas as
+ *        propriedades de uma árvore AVL.
+ * 
+ * @param[in] n Ponteiro para o nó raiz da subárvore a ser validada.
+ * 
+ * @return Resultado da validação da subárvore.
+ * 
+ * @retval - `true`: Se for uma AVL perfeitamente válida;
+ * @retval - `false`: Caso alguma propriedade seja violada.
+ */
+bool valid_avl(Node *n) {
+    if (!n) return true; // Uma subárvore vazia é uma AVL válida
+
+    // Valida se a altura armazenada no nó atual condiz com a sua altura real
+    if (n->height != compute_real_height(n)) return false;
+
+    // Valida se o balanceamento retornado no nó atual condiz com o seu balanceamento real
+    int balance = get_balance(n);
+    if (balance != compute_real_height(n->left) - compute_real_height(n->right)) {
+        return false;
+    }
+
+    // Valida o fator de balanceamento
+    if (balance < -ALLOWED_IMBALANCE || balance > ALLOWED_IMBALANCE) {
+        return false; // O nó está desbalanceado, então não é uma AVL válida
+    }
+
+    // Valida se os ponteiros estão corretamente bidirecionais
+    if (n->left && n->left->parent != n) {
+        return false;
+    }
+    if (n->right && n->right->parent != n) {
+        return false;
+    }
+
+    // Valida a propriedade BST (menores à esquerda e maiores à direita)
+    if (!valid_bst(n, NULL, NULL)) return false;
+
+    // Continua a validação descendo recursivamente para todos os nós descendentes
+    return valid_avl(n->left) && valid_avl(n->right);
+}
+
+/**
+ * @brief Valida exaustivamente uma estrutura AVL testando todas as permutações 
+ *        possíveis de inserções e remoções para um determinado conjunto de entrada.
+ * 
+ * @param[in] data_base Arranjo contendo o conjunto de chaves para os testes (deve estar ordenado!).
+ * @param[in] N Tamanho do arranjo `data_base`.
+ * @param[out] tested_count Ponteiro para armazenar o total de permutações testadas com sucesso.
+ * 
+ * @return Código de retorno do resultado da validação.
+ * 
+ * @retval - `0`: Se a árvore permanecer válida em 100% dos cenários de teste;
+ * @retval - `1`: Falha na alocação de memória para os arranjos auxiliares na heap;
+ * @retval - `2`: Falha na alocação de memória para a raiz da árvore (`bst_alloc`);
+ * @retval - `3`: Inconsistência de dados - `bst_check` falhou após uma INSERÇÃO;
+ * @retval - `4`: Estrutura inválida - `valid_avl` falhou após uma INSERÇÃO;
+ * @retval - `5`: Inconsistência de dados - `bst_check` falhou após uma REMOÇÃO;
+ * @retval - `6`: Estrutura inválida - `valid_avl` falhou após uma REMOÇÃO.
+ */
+bool brute_force_avl_validation(const int *data_base, const int N, unsigned long long *tested_count) {
+    int status = 0; // Inicializado com "Sucesso"
+
+    int *data_insert = (int *) malloc(sizeof(int) * N);
+    int *data_remove = (int *) malloc(sizeof(int) * N);
+    int *arr = (int *) malloc(sizeof(int) * N);
+
+    if (!data_insert || !data_remove || !arr) {
+        status = 1;
+        goto cleanup;
+    }
+
+    memcpy(data_insert, data_base, sizeof(int) * N);
+    *tested_count = 0; // O número de permutações validadas com sucesso
+
+    do { // Loop de Inserção
+        memcpy(data_remove, data_base, sizeof(int) * N);
+
+        do { // Loop de Remoção
+            BST *T = bst_alloc();
+            if (!T) {
+                status = 2; // Falhou ao alocar a árvore
+                goto cleanup;
+            }
+
+            // Teste de Inserções
+            for (int i = 0; i < N; i++) {
+                Node *nd = node_alloc(data_insert[i]);
+                avl_insert(T, nd);
+
+                if (!bst_check(T->root, data_insert, i + 1)) {
+                    bst_free(T);
+                    status = 3; // Dados inconsistentes
+                    goto cleanup;
+                }
+                
+                if (!valid_avl(T->root)) {
+                    bst_free(T);
+                    status = 4; // Estrutura AVL inválida
+                    goto cleanup;
+                }
+            }
+            
+            int asize = N;
+            memcpy(arr, data_insert, sizeof(int) * asize);
+            
+            // Teste de Remoções
+            for (int i = 0; i < N; i++) {
+                avl_delete(T, bst_search(T->root, data_remove[i]));
+                asize = arr_remove(arr, asize, data_remove[i]);
+                
+                if (!bst_check(T->root, arr, asize)) {
+                    bst_free(T);
+                    status = 5; // Dados inconsistentes
+                    goto cleanup;
+                }
+                
+                if (!valid_avl(T->root)) {
+                    bst_free(T);
+                    status = 6; // Estrutura AVL inválida
+                    goto cleanup;
+                }
+            }
+
+            bst_free(T);
+            (*tested_count)++;
+
+        } while (perm_next(data_remove, N));
+    } while (perm_next(data_insert, N));
+
+cleanup:
+    // Esse bloco será executado tanto em sucesso quanto em falha
+    if (data_remove) free(data_remove);
+    if (data_insert) free(data_insert);
+    if (arr) free(arr);
+    
+    return status;
+}
+
 int main() {
     int DATA_BASE[] = {1, 2, 3, 4, 5};
     const int N = sizeof(DATA_BASE) / sizeof(int); // Tamanho do arranjo `DATA_BASE`
 
-    qsort(DATA_BASE, N, sizeof(int), int_comp); // Ordena o arranjo `DATA_BASE`
-
-    int *data_insert, *data_remove;
-
-    data_insert = (int *) malloc(sizeof(int) * N);
-    data_remove = (int *) malloc(sizeof(int) * N);
-    int *arr = (int *) malloc(sizeof(int) * N);
-
-    memcpy(data_insert, DATA_BASE, sizeof(int) * N);
+    // Garante que o arranjo base está na menor permutação lexicográfica possível (ordenado em ordem crescente)
+    qsort(DATA_BASE, N, sizeof(int), int_comp); 
 
     unsigned long long permutacoesTestadas = 0ULL;
-    
-    /**
-     * Desativamos as impressões para deixar o assert fazer a verificação automaticamente
-     */
 
-    do { // Loop de Inserção
-        memcpy(data_remove, DATA_BASE, sizeof(int) * N);
+    printf("\nIniciando bateria de testes AVL...\n");
 
-        do { // Loop de Remoção
-            BST *T = bst_alloc();
+    int status = brute_force_avl_validation(DATA_BASE, N, &permutacoesTestadas);
 
-            // printf("--------------------------------------------\n");
-            // printf("Dados para Insercao:\n\t");
-            // data_print(data_insert, N);
-            
-            for (int i = 0; i < N; i++) {
-                // printf("Inserindo: %02d\n", data_insert[i]);
-                Node *nd = node_alloc(data_insert[i]);
-                avl_insert(T, nd);
-                // bst_print(T);
-                assert(bst_check(T->root, data_insert, i + 1));
-            }
-            
-            // printf("Arvore apos todas as INSERCOES:\n");
-            // bst_printTree(T);
+    if (status == 0) {
+        printf("\n%llu permutações distintas de inserções e remoções foram validadas com sucesso!\n", permutacoesTestadas);
+        return EXIT_SUCCESS;
+    } else {
+        printf("\nErro: Testes abortados prematuramente.\n");
+        printf("(Número de permutações bem sucedidas antes da falha: %llu)\n", permutacoesTestadas);
+        printf("Detalhamento do erro: ");
 
-            // printf("Dados para Remocao:\n\t");
-            // data_print(data_remove, N);
-            int asize = N;
-            memcpy(arr, data_insert, sizeof(int) * asize);
-            
-            for (int i = 0; i < N; i++) {
-                // printf("Removendo: %02d\n", data_remove[i]);
-                avl_delete(T, bst_search(T->root, data_remove[i]));
-                // bst_print(T);
-                asize = arr_remove(arr, asize, data_remove[i]);
-                assert(bst_check(T->root, arr, asize));
-            }
-            
-            // printf("Arvore apos todas as REMOCOES:\n");
-            // bst_printTree(T);
+        switch (status) {
+            case 1:
+                printf("Código [1]: Falha de alocação de memória (arranjos auxiliares).\n");
+                break;
+            case 2:
+                printf("Código [2]: Falha de alocação de memória (\"bst_alloc\").\n");
+                break;
+            case 3:
+                printf("Código [3]: Inconsistência nos dados (\"bst_check\" falhou) após uma inserção.\n");
+                break;
+            case 4:
+                printf("Código [4]: Estrutura inválida (\"valid_avl\" falhou) após uma inserção.\n");
+                break;
+            case 5:
+                printf("Código [5]: Inconsistência nos dados (\"bst_check\" falhou) após uma remoção.\n");
+                break;
+            case 6:
+                printf("Código [6]: Estrutura inválida (\"valid_avl\" falhou) após uma remoção.\n");
+                break;
+            default:
+                printf("Código [?]: Erro desconhecido.\n");
+                break;
+        }
 
-            bst_free(T);
-
-            permutacoesTestadas++;
-        } while (perm_next(data_remove, N));
-    } while (perm_next(data_insert, N));
-    
-    free(data_remove);
-    free(data_insert);
-    free(arr);
-
-    printf("\n%llu permutações distintas entre inserções / remoções foram validadas com sucesso!\n", permutacoesTestadas);
-
-    return EXIT_SUCCESS;
+        printf("\n");
+        return EXIT_FAILURE;
+    }
 }
