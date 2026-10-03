@@ -14,6 +14,10 @@ typedef struct Node {
     int height; // Distância até o nó folha mais profundo entre as subárvores esquerda e direita
 } Node;
 
+typedef struct BinarySearchTree {
+    struct Node *root;
+} BST;
+
 /**
  * @brief Encontra o maior entre dois inteiros.
  * 
@@ -80,6 +84,59 @@ int get_balance(Node *n) {
 }
 
 /**
+ * @brief Substitui uma subárvore BST de raíz `u` por uma subárvore BST de raíz `v`.
+ * 
+ * @param[in] T Ponteiro para a árvore BST onde as subárvores estão contidas.
+ * @param[in] u Ponteiro para o nó raíz da subárvore BST original.
+ * @param[in] v Ponteiro para o novo nó raíz da subárvore BST.
+ */
+void transplant(BST *T, Node *u, Node *v) {
+    if (u == T->root) {
+        // se u for a raiz, v vai virar a nova raiz
+        T->root = v;
+    } else if (u == u->parent->left) {
+        // se u for filho esquerdo seu pai aponta pra v
+        u->parent->left = v;
+    } else {
+        // se u for o filho direito o pai aponta pra v
+        u->parent->right = v;
+    }
+
+    if (v) {
+        // faz o pai de v apontar para o mesmo lugar
+        v->parent = u->parent;
+    }
+}
+
+void right_rotate(BST *T, Node *n) {
+    Node *leftN = n->left;
+
+    transplant(T, n, leftN);
+
+    Node *RleftN = leftN->right;
+    n->left = RleftN;
+    leftN->right = n;
+
+    // Atualiza as alturas
+    update_height(n); // k2->height = max(...) + 1;
+    update_height(leftN); // k1->height = max(...) + 1;
+}
+
+void left_rotate(BST *T, Node *n) {
+    Node *rightN = n->right;
+
+    transplant(T, n, rightN);
+
+    Node *LrightN = rightN->left;
+    n->right = LrightN;
+    rightN->left = n;
+
+    // Atualiza as alturas
+    update_height(n); // k2->height = max(...) + 1;
+    update_height(rightN); // k1->height = max(...) + 1;
+}
+
+/**
  * @brief Aloca um nó na memória heap e preenche com a chave fornecida.
  * 
  * @param[in] key Chave a ser inserida no nó alocado.
@@ -140,10 +197,6 @@ Node *bst_maximum(Node *x) {
 
     return y;
 }
-
-typedef struct BinarySearchTree {
-    struct Node *root;
-} BST;
 
 /**
  * @brief Aloca uma BST vazia na memória heap.
@@ -268,27 +321,6 @@ Node *bst_search(Node *x, int key) {
     }
 
     return x;
-}
-
-/**
- * @brief Substitui uma subárvore BST de raíz `u` por uma subárvore BST de raíz `v`.
- * 
- * @param[in] T Ponteiro para a árvore BST onde as subárvores estão contidas.
- * @param[in] u Ponteiro para o nó raíz da subárvore BST original.
- * @param[in] v Ponteiro para o novo nó raíz da subárvore BST.
- */
-void transplant(BST *T, Node *u, Node *v) {
-    if (u->parent == NULL) { // se u for a raiz, v vai virar a nova raiz
-        T->root = v;
-    } else if (u == u->parent->left) { // se u for filho esquerdo seu pai aponta pra v
-        u->parent->left = v; 
-    } else {
-        u->parent->right = v; // se u for o filho direito o pai aponta pra v
-    }
-
-    if (v != NULL) { // faz o pai de v apontar para o mesmo lugar
-        v->parent = u->parent;
-    }
 }
 
 /**
