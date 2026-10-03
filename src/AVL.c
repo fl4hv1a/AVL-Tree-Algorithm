@@ -540,12 +540,30 @@ void bst_store(Node *nd, int *arr, int *index) {
  * 
  * @return O resultado da comparação.
  * 
- * @retval - Um inteiro `negativo`: Se `a` for menor que `b`;
+ * @retval - `-1`: Se `a` for menor que `b`;
  * @retval - `0`: Se `a` for igual a `b`;
- * @retval - Um inteiro `positivo`: Se `a` for maior que `b`.
+ * @retval - `1`: Se `a` for maior que `b`.
+ * 
+ * Pode ser utilizado como "`int_comp(a, b)` `op` `0`"
+ *          (onde `op` é o operador de comparação desejado).
+ * 
+ *          Ex:
+ *
+ *              - "`int_comp(a, b)` `<` `0`" - Testa se `a < b`;
+ * 
+ *              - "`int_comp(a, b)` `>=` `0`" - Testa se `a >= b`;
  */
 int int_comp(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+    const int val_a = *(const int *)a; // Faz o "cast" pra "int *" e armazena o valor apontado por `a`
+    const int val_b = *(const int *)b; // Faz o "cast" pra "int *" e armazena o valor apontado por `b`
+
+    if (val_a < val_b) {
+        return -1;
+    } else if (val_a > val_b) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 /**
